@@ -1,0 +1,5 @@
+// Al-Bushra News for Android: a thin, native shell around the web app, so the
+// phone and the website always show the same newsroom from the same server.
+plugins {
+    id 'com.android.application' version '8.13.0' apply false
+}

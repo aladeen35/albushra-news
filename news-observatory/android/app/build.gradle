@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+}
+
+// The server the app opens. Set at build time (-PserverUrl=https://...), and
+// changeable later from inside the app; empty means "ask on first launch".
+def serverUrl = (project.findProperty('serverUrl') ?: '').toString().trim()
+def versionNameProp = (project.findProperty('appVersionName') ?: '1.0.0').toString()
+def versionCodeProp = (project.findProperty('appVersionCode') ?: '1').toString().toInteger()
+
+android {
+    namespace 'sa.albushra.news'
+    compileSdk 36
+
+    defaultConfig {
+        // Distinct from the Quran app (sa.mushaf.albushra): both install side by side.
+        applicationId 'sa.albushra.news'
+        minSdk 24
+        targetSdk 36
+        versionCode versionCodeProp
+        versionName versionNameProp
+        buildConfigField 'String', 'SERVER_URL', "\"${serverUrl.replace('"', '')}\""
+    }
+
+    buildFeatures { buildConfig true }
+
+    signingConfigs {
+        // One fixed key, so every new APK installs over the previous one.
+        // Public copy: the key is not in this repository. Provide your own
+        // through NEWS_KEYSTORE_PATH and the passwords in the environment.
+        release {
+            storeFile file(System.getenv('NEWS_KEYSTORE_PATH') ?: '../keystore/albushra-news.jks')
+            storePassword System.getenv('NEWS_STORE_PASSWORD') ?: ''
+            keyAlias System.getenv('NEWS_KEY_ALIAS') ?: 'albushra-news'
+            keyPassword System.getenv('NEWS_KEY_PASSWORD') ?: ''
+            enableV1Signing true
+            enableV2Signing true
+            enableV3Signing true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+}

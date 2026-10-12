@@ -1,0 +1,56 @@
+# GitHub Pages: a read-only preview of البشرى للأخبار with real data, rebuilt
+# every hour, for free on a PUBLIC repository (private repositories need a
+# paid GitHub plan for Pages).
+#
+# Use: copy this file to .github/workflows/ in a public repository that
+# contains the news-observatory folder, then Settings → Pages → Source:
+# "GitHub Actions". The site appears at https://<user>.github.io/<repo>/
+name: البشرى للأخبار — GitHub Pages
+
+on:
+  schedule:
+    - cron: '7 * * * *'      # every hour
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: news-observatory/backend
+    env:
+      SCHEDULER_ENABLED: 'false'
+      DATABASE_URL: sqlite:///./data/pages.db
+      HDX_APP_NAME: albushra-news
+      HDX_APP_EMAIL: albushra-news@users.noreply.github.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12', cache: pip, cache-dependency-path: news-observatory/backend/requirements.txt }
+      - run: pip install -r requirements.txt
+      - name: جلب الأخبار وبناء الموقع الثابت
+        run: |
+          python -m app.cli ingest-news > /dev/null
+          python -m app.cli ingest-metrics > /dev/null
+          python scripts/export_static.py ../../site
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: '${{ steps.deployment.outputs.page_url }}' }
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

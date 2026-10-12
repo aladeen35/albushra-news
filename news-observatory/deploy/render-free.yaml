@@ -1,0 +1,33 @@
+# Render, FREE plan: the full site with the admin panel, for trying it out.
+# Render → New → Blueprint → this repository → Blueprint path:
+#   news-observatory/deploy/render-free.yaml
+#
+# What "free" means here:
+# - the service sleeps after 15 minutes without visitors and wakes on the next
+#   visit (about a minute); each wake fetches the news at once;
+# - data lives in SQLite on the service's temporary disk and is wiped on
+#   every restart or redeploy. Fine for a trial, not for running the site.
+services:
+  - type: web
+    name: albushra-news-trial
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerContext: ./news-observatory
+    dockerfilePath: ./news-observatory/backend/Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:////tmp/albushra.db
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SCHEDULER_ENABLED
+        value: "true"
+      - key: HDX_APP_NAME
+        value: albushra-news
+      - key: HDX_APP_EMAIL
+        value: albushra-news@users.noreply.github.com

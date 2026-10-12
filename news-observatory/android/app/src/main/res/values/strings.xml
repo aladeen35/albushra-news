@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">البشرى للأخبار</string>
+    <string name="setup_title">عنوان خادم البشرى للأخبار</string>
+    <string name="setup_hint">https://news.example.com</string>
+    <string name="setup_help">أدخل عنوان الموقع الذي يعمل عليه خادم البشرى للأخبار. يحفظ التطبيق العنوان ويفتحه في كل مرة.</string>
+    <string name="setup_save">حفظ وفتح</string>
+    <string name="setup_invalid">أدخل عنوانًا صحيحًا يبدأ بـ https://</string>
+    <string name="error_title">تعذّر الاتصال بالخادم</string>
+    <string name="error_body">تحقّق من اتصالك بالإنترنت، ثم أعد المحاولة.</string>
+    <string name="error_retry">إعادة المحاولة</string>
+    <string name="error_change">تغيير عنوان الخادم</string>
+</resources>
