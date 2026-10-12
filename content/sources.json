@@ -1,5 +1,8 @@
 {
  "gnews": {
   "enabled": true
+ },
+ "ocha_opt": {
+  "enabled": true
  }
 }
