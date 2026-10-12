@@ -1,1 +1,10 @@
-[]
+[
+ {
+  "metric_id": "sd_idps",
+  "period_end": "2026-07-31",
+  "value": 8622801,
+  "decision": "approve",
+  "reviewer": "aladeen35",
+  "at": "2026-10-12T22:41:59.048Z"
+ }
+]
