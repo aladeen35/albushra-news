@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.venv/
+news-observatory/backend/data/
+.env
+site/
+site-data/
