@@ -66,7 +66,8 @@ function shell() {
     // replaceChildren() would print a bare null as text, so skip it.
     ...(META?.demo ? [h("div", { class: "demo-banner", role: "note" }, t("demo.banner"))] : []),
     ...(META?.static ? [h("div", { class: "static-banner", role: "note" },
-      t("static.banner", { time: fmtDateTime(META.static.generated_at) }))] : []));
+      t(META.static.repo ? "static.banner.pages" : "static.banner",
+        { time: fmtDateTime(META.static.generated_at) }))] : []));
   document.querySelector("nav.tabbar").replaceChildren(
     ...TABS.map(([href, key, ic, code]) => h("a", { href, "aria-current": route === href ? "page" : null },
       navMark(ic, code), h("span", {}, t(key)))));

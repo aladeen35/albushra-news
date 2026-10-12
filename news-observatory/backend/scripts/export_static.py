@@ -44,7 +44,11 @@ def export_data(data: str) -> int:
         shutil.rmtree(data)
     with SessionLocal() as s:
         meta = public.meta(s)
-        meta["static"] = {"generated_at": public.iso(utcnow())}
+        # Where the admin page commits its changes (GitHub Pages builds only).
+        meta["static"] = {"generated_at": public.iso(utcnow()),
+                          "repo": os.environ.get("GITHUB_REPOSITORY") or None,
+                          "content_path": os.environ.get("CONTENT_PATH", "content"),
+                          "workflow": os.environ.get("PAGES_WORKFLOW", "pages.yml")}
         _write(f"{data}/meta.json", meta)
         for scope in s.scalars(select(Scope).where(Scope.enabled)):
             _write(f"{data}/dashboard-{scope.key}.json", public.dashboard(scope.key, s))
@@ -58,7 +62,41 @@ def export_data(data: str) -> int:
             articles.append(item)
         _write(f"{data}/articles.json", articles)
         _write(f"{data}/sources.json", public.sources(s))
+        _write(f"{data}/status.json", _status(s))
+        _write(f"{data}/pending.json", _pending(s))
     return len(articles)
+
+
+def _status(s) -> dict:
+    """What the admin's monitoring tab shows on a static site: this build's fetches."""
+    from collections import defaultdict
+    from app.models import FetchLog, Source
+    per = defaultdict(lambda: {"calls": 0, "errors": 0, "items": 0, "new": 0, "last_error": None})
+    for log in s.scalars(select(FetchLog).order_by(FetchLog.id)):
+        row = per[log.target]
+        row["calls"] += 1
+        row["items"] += log.items or 0
+        row["new"] += log.new_items or 0
+        if log.status not in ("ok",):
+            row["errors"] += 1
+            row["last_error"] = (log.error or log.status)[:300]
+    sources = [{"key": src.key, "name": src.name, "enabled": src.enabled, "group": (src.config or {}).get("group"),
+                **per.get(src.key, {"calls": 0, "errors": 0, "items": 0, "new": 0, "last_error": None})}
+               for src in s.scalars(select(Source).where(Source.is_demo.is_(False)).order_by(Source.name))]
+    metrics = [{"metric_id": m.metric_id, "name": {"ar": m.name_ar, "en": m.name_en},
+                **per.get(m.metric_id, {"calls": 0, "errors": 0, "items": 0, "new": 0, "last_error": None})}
+               for m in s.scalars(select(Metric).order_by(Metric.metric_id))]
+    return {"generated_at": public.iso(utcnow()), "sources": sources, "metrics": metrics,
+            "articles_total": len(list(s.scalars(select(Article.id))))}
+
+
+def _pending(s) -> list:
+    """Figures waiting for review, for the static admin's review queue."""
+    from app.models import MetricObservation
+    rows = s.scalars(select(MetricObservation).where(MetricObservation.review_status == "pending")
+                     .order_by(MetricObservation.id))
+    return [dict(public.observation_json(o), metric=public.metric_definition_json(o.metric),
+                 entered_by=o.entered_by) for o in rows]
 
 
 def build_site(data: str, out: str) -> None:

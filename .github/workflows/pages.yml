@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '7 * * * *'
   push:
-    branches: [main]
+    branches: [main]   # includes every save from the admin page (content/)
   workflow_dispatch:
 
 permissions:
@@ -41,15 +41,14 @@ jobs:
           pip install -r requirements-dev.txt
           python -m pytest -q -p no:warnings
 
-      - name: جلب الأخبار والمؤشرات الحقيقية
-        run: |
-          python -m app.cli ingest-news | tail -40
-          python -m app.cli ingest-metrics | tail -20
-
-      - name: بناء الموقع الثابت
-        run: |
-          python scripts/export_static.py ../../site
-          python -c "import json; print(len(json.load(open('../../site/data/articles.json'))), 'stories in the site')"
+      # Real news and figures, plus what editors saved from the admin page
+      # (the content/ folder), built into the static site.
+      - name: جلب البيانات وتطبيق تعديلات الإدارة وبناء الموقع
+        env:
+          CONTENT_DIR: ../../content
+          CONTENT_PATH: content
+          PAGES_WORKFLOW: pages.yml
+        run: python scripts/build_pages.py ../../site
 
       - name: النشر على فرع gh-pages
         uses: peaceiris/actions-gh-pages@v4

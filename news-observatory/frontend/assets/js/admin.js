@@ -4,6 +4,7 @@
 import { h, t, L, api, isStatic, fmtDate, fmtDateTime, fmtNumber, fmtPeriod, externalLink } from "./core.js";
 import { META, errorState, loading, typeBadge, countryName } from "./components.js";
 import { icon } from "./icons.js";
+import { ghAdminView } from "./ghadmin.js";
 
 function token() { try { return sessionStorage.getItem("obs.admin") || ""; } catch { return ""; } }
 function setToken(v) { try { sessionStorage.setItem("obs.admin", v); } catch { /* ignore */ } }
@@ -14,6 +15,8 @@ const call = (path, opts = {}) => api(`/api/admin${path}`, { ...opts, token: tok
 const TABS = ["status", "addsite", "addnews", "reviews", "entry", "hdx", "sources", "regions", "scopes"];
 
 export function adminView(params, rerender) {
+  // GitHub Pages build: admin through the repository (see ghadmin.js).
+  if (isStatic() && META.static?.repo) return ghAdminView(params, rerender);
   if (isStatic()) {
     return h("div", { class: "login-wrap" }, h("div", { class: "login-card card" },
       h("div", { class: "login-head" }, h("img", { src: "assets/icons/icon-192.png", alt: "", width: 72, height: 72 }),
