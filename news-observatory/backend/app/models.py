@@ -46,7 +46,7 @@ class Source(Base):
     license_note: Mapped[str | None] = mapped_column(Text, nullable=True)
     attribution: Mapped[str | None] = mapped_column(Text, nullable=True)
     allow_description: Mapped[bool] = mapped_column(Boolean, default=True)
-    allow_images: Mapped[bool] = mapped_column(Boolean, default=False)
+    allow_images: Mapped[bool] = mapped_column(Boolean, default=True)
     allow_full_text: Mapped[bool] = mapped_column(Boolean, default=False)
     # 0..1, published in the ranking policy. Editorial, not computed.
     reliability: Mapped[float] = mapped_column(Float, default=0.5)

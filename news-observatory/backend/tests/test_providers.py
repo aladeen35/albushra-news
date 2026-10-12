@@ -293,3 +293,17 @@ def test_hapi_match_accepts_a_list_of_values():
     rows = [{"population": 5, "reference_period_end": "2026-01-01", "category": "total"},
             {"population": 9, "reference_period_end": "2026-01-01", "category": "Adult"}]
     assert _hapi(rows).latest({"endpoint": "e", "match": {"category": ["", "total"]}}).items[0].value == 5
+
+
+def test_rss_image_from_media_tag_or_item_html():
+    rss = b"""<?xml version="1.0"?><rss xmlns:media="http://search.yahoo.com/mrss/"
+      xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel>
+      <item><title>a</title><link>https://p.org/a</link><pubDate>Wed, 01 Oct 2026 10:00:00 GMT</pubDate>
+        <media:content url="https://p.org/a.jpg" medium="image"/></item>
+      <item><title>b</title><link>https://p.org/b</link><pubDate>Wed, 01 Oct 2026 10:00:00 GMT</pubDate>
+        <description>&lt;p&gt;&lt;img class="x" src="https://p.org/b.jpg?w=1&amp;h=2"/&gt; text&lt;/p&gt;</description></item>
+      <item><title>c</title><link>https://p.org/c</link><pubDate>Wed, 01 Oct 2026 10:00:00 GMT</pubDate>
+        <content:encoded><![CDATA[<img src="http://p.org/insecure.jpg">]]></content:encoded></item>
+    </channel></rss>"""
+    items = RssAdapter(client(lambda r: httpx.Response(200, content=rss))).fetch("https://p.org/rss", "P").items
+    assert [i.image_url for i in items] == ["https://p.org/a.jpg", "https://p.org/b.jpg?w=1&h=2", None]

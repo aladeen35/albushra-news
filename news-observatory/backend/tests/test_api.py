@@ -168,7 +168,7 @@ def test_trusted_feeds_are_seeded_on_but_flagged_for_terms_review(session):
     keys = {f["key"] for f in TRUSTED_FEEDS}
     rows = list(session.scalars(select(Source).where(Source.key.in_(keys))))
     assert len(rows) == len(keys) >= 6
-    assert all(s.enabled and not s.terms_reviewed and not s.allow_images for s in rows)
+    assert all(s.enabled and not s.terms_reviewed and s.allow_images for s in rows)
     assert all(f["url"].startswith("https://") for s in rows for f in s.config["feeds"])
 
 
@@ -180,10 +180,10 @@ def test_seeded_feed_stays_editable_but_enabling_still_needs_review(client):
                         headers=ADMIN).status_code == 422
 
 
-def test_hourly_by_default(client, monkeypatch):
+def test_news_every_20_minutes_figures_hourly_by_default(client, monkeypatch):
     monkeypatch.delenv("NEWS_INTERVAL_MINUTES", raising=False)
     monkeypatch.delenv("METRICS_INTERVAL_MINUTES", raising=False)
-    assert client.get("/api/meta").json()["refresh_minutes"] == {"news": 60, "metrics": 60}
+    assert client.get("/api/meta").json()["refresh_minutes"] == {"news": 20, "metrics": 60}
 
 
 def test_news_job_reads_feeds_and_one_bad_feed_does_not_stop_the_rest(session, monkeypatch):
@@ -519,3 +519,29 @@ def test_static_export_builds_a_complete_read_only_site(session, tmp_path, monke
                  "metrics/sd_idps.json"):
         assert (tmp_path / "site" / "data" / name).is_file(), name
     assert (tmp_path / "site" / "assets" / "js" / "static.js").is_file()
+
+
+def test_saudi_page_takes_stories_about_saudi_and_saudi_publishers_local_news(client, session):
+    _article(session, "ولي العهد يستقبل وفدًا في الرياض", "https://n.com/sa1")
+    local = store_article(session, NormalizedArticle(
+        url="https://spa.gov.sa/x", title="افتتاح مشروع جديد", publisher_name="واس", publisher_country="SA",
+        published_at=datetime.now(timezone.utc), provider="rss", language="ar"), None)
+    _article(session, "اشتباكات في الفاشر", "https://n.com/sd1")
+    session.commit()
+    titles = {a["title"] for a in client.get("/api/articles?section=saudi").json()["items"]}
+    assert titles == {"ولي العهد يستقبل وفدًا في الرياض", local.title}
+    assert "saudi" in client.get("/api/meta").json()["sections"]
+
+
+def test_images_shown_by_default_and_hidden_by_the_source_switch(client, session):
+    src = session.scalar(select(Source).where(Source.key == "bbc"))
+    store_article(session, NormalizedArticle(
+        url="https://bbc.com/a", title="Story with a photo", publisher_name="BBC",
+        image_url="https://ichef.bbci.co.uk/p.jpg",
+        published_at=datetime.now(timezone.utc), provider="rss", language="en"), src)
+    session.commit()
+    item = client.get("/api/articles?q=photo").json()["items"][0]
+    assert item["image_url"] == "https://ichef.bbci.co.uk/p.jpg"
+    src.allow_images = False
+    session.commit()
+    assert client.get("/api/articles?q=photo").json()["items"][0]["image_url"] is None

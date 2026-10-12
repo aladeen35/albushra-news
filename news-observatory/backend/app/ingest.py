@@ -44,7 +44,6 @@ def store_article(session: Session, item: NormalizedArticle, source: Source | No
     text = f"{item.title} {item.description or ''}"
     fingerprint = title_fingerprint(item.title)
     allow_desc = source.allow_description if source else True
-    allow_img = source.allow_images if source else False
     article = Article(
         canonical_url=canon, url=item.url, title=item.title,
         description=item.description if allow_desc else None,
@@ -55,7 +54,8 @@ def store_article(session: Session, item: NormalizedArticle, source: Source | No
         language=(item.language or detect_language(text))[:8],
         published_at=item.published_at, fetched_at=utcnow(),
         content_type=item.content_type if item.content_type else "news",
-        image_url=item.image_url if allow_img else None,
+        # Stored always; shown only while the source's "show images" switch is on.
+        image_url=item.image_url if (item.image_url or "").startswith("https://") else None,
         title_fingerprint=fingerprint, is_demo=bool(source and source.is_demo),
         author=item.author)
     if article.publisher_country:

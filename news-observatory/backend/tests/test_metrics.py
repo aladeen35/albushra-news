@@ -48,9 +48,17 @@ def test_no_data_means_no_value_not_zero(session):
     assert state.status == "no_data" and state.current is None
 
 
-def test_pending_values_are_not_shown(session):
+def test_unreviewed_values_are_published_and_marked(session):
     m = _metric(session)
     _obs(session, m, 5, 100, approve=False)
+    state = metric_state(m)
+    assert state.status == "current" and state.current.review_status == "pending"
+
+
+def test_rejected_values_are_withdrawn(session):
+    m = _metric(session)
+    o = _obs(session, m, 5, 100, approve=False)
+    o.review_status = "rejected"
     assert metric_state(m).status == "no_data"
 
 

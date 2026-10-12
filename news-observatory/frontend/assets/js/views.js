@@ -1,7 +1,7 @@
 // Pages. Each view returns a node (or a promise of one) for <main>.
 import { icon } from "./icons.js";
 import { translateButton, translatedPageUrl, targetLanguage } from "./translate.js";
-import { h, t, L, settings, saveSettings, saved, prefs, api, qs, fmtDate, fmtDateTime, fmtNumber,
+import { h, t, every, L, settings, saveSettings, saved, prefs, api, qs, fmtDate, fmtDateTime, fmtNumber,
   fmtPeriod, externalLink, langName } from "./core.js";
 import { META, metricCard, articleList, emptyState, errorState, loading, trendChart, typeBadge,
   countryName, observationFacts, valueBlock, bdi, demoBadge, flag, avatar, countryChip,
@@ -34,8 +34,7 @@ export function homeView(params) {
     h("div", { class: "updated" },
       h("span", { class: "muted small" }, t("home.updated")), " ",
       h("strong", {}, META.last_updated ? bdi(fmtDateTime(META.last_updated)) : t("home.never")),
-      h("div", { class: "muted small" }, META.refresh_minutes?.news === 60
-        ? t("home.cadence") : t("home.cadence.minutes", { n: META.refresh_minutes?.news }))),
+      h("div", { class: "muted small" }, t("home.cadence.every", { every: every(META.refresh_minutes?.news) }))),
     switcher);
 
   const dashboard = api(`/api/dashboard${qs({ scope })}`);
@@ -101,6 +100,7 @@ export function homeView(params) {
 
   const quick = h("div", { class: "quick" },
     h("a", { class: "quick-link", href: "#/section/palestine" }, flag("PS", { size: "lg" }), t("section.palestine")),
+    h("a", { class: "quick-link", href: "#/section/saudi" }, flag("SA", { size: "lg" }), t("section.saudi")),
     h("a", { class: "quick-link", href: "#/section/sudan" }, flag("SD", { size: "lg" }), t("section.sudan")),
     h("a", { class: "quick-link", href: "#/section/sports" }, icon("sports", 24), t("section.sports")),
     h("a", { class: "quick-link", href: "#/foryou" }, icon("foryou", 24), t("nav.foryou")));
@@ -117,7 +117,7 @@ export function homeView(params) {
 }
 
 // --- sections & search filters --------------------------------------------
-const SECTION_TITLES = { world: "section.world", palestine: "section.palestine", sudan: "section.sudan",
+const SECTION_TITLES = { world: "section.world", palestine: "section.palestine", saudi: "section.saudi", sudan: "section.sudan",
   arab_world: "section.arab_world", islamic_world: "section.islamic_world" };
 
 function filterBar(params, base) {
@@ -173,7 +173,7 @@ export function sectionView(params, key) {
       articleList(data.items), pager(data, params, base));
   });
   const mark = key === "sports" ? icon("sports", 28) : key === "world" ? icon("world", 28)
-    : key === "arab_world" ? icon("arab", 28) : key === "islamic_world" ? icon("islamic", 28)
+    : key === "saudi" ? flag("SA", { size: "lg" }) : key === "arab_world" ? icon("arab", 28) : key === "islamic_world" ? icon("islamic", 28)
     : scope?.countries?.length === 1 ? flag(scope.countries[0], { size: "lg" }) : null;
   const flags = region ? h("div", { class: "flag-strip", "aria-hidden": "true" }, region.countries.map(c => flag(c))) : null;
   return h("div", {}, h("h1", { class: "page-title" }, mark, title), flags, note, filterBar(params, base), list);

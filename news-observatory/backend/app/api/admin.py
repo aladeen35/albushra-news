@@ -572,7 +572,7 @@ class SiteCreate(BaseModel):
     group: str = Field("arab", pattern=r"^(saudi|arab|sudan|sports|international|humanitarian)$")
     topic: str | None = None
     terms_reviewed: bool = False
-    allow_images: bool = False
+    allow_images: bool = True
 
 
 @router.post("/sites", status_code=201)

@@ -5,7 +5,7 @@ import math
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.orm import Session
 
 from ..classify import normalize_ar
@@ -13,13 +13,13 @@ from ..config import get_settings
 from ..db import as_utc, get_session, utcnow
 from ..demo import demo_active
 from ..geo import COUNTRIES
-from ..metrics import metric_state
+from ..metrics import is_published, metric_state
 from ..models import (CONTENT_TYPES, TOPICS, Article, ArticleTag, FetchLog, Metric,
                       MetricObservation, RegionList, Scope, Source)
 
 router = APIRouter(prefix="/api")
 
-SECTIONS = ("world", "palestine", "sudan", "sports", "arab_world", "islamic_world")
+SECTIONS = ("world", "palestine", "saudi", "sudan", "sports", "arab_world", "islamic_world")
 
 # Published in /api/meta and on the "how we show numbers" page.
 RANKING = {"recency": 0.55, "breadth": 0.25, "reliability": 0.20, "half_life_hours": 12}
@@ -99,7 +99,8 @@ def article_json(a: Article, siblings: int = 0) -> dict:
         "event_countries": a.tag_values("event_country"), "topics": a.tag_values("topic"),
         "source_key": a.source.key if a.source else None,
         "author": a.author, "added_by_editor": bool(a.entered_by),
-        "image_url": a.image_url, "cluster_id": a.cluster_id, "other_publishers": siblings,
+        "image_url": a.image_url if (a.source is None or a.source.allow_images) else None,
+        "cluster_id": a.cluster_id, "other_publishers": siblings,
         "provider": a.provider, "classification_edited": a.classification_edited,
         "is_demo": a.is_demo,
     }
@@ -122,6 +123,11 @@ def _section_filter(session: Session, section: str | None):
         return None
     if section == "palestine":
         return _has_tag("event_country", ["PS"])
+    if section == "saudi":
+        # Stories about Saudi Arabia, plus Saudi publishers' local stories
+        # that name no place the classifier recognises.
+        untagged = ~Article.id.in_(select(ArticleTag.article_id).where(ArticleTag.kind == "event_country"))
+        return or_(_has_tag("event_country", ["SA"]), and_(Article.publisher_country == "SA", untagged))
     if section == "sports":  # a topic page, not a place
         return _has_tag("topic", ["sports"])
     if section in ("arab_world", "islamic_world"):
@@ -261,14 +267,14 @@ def metric_detail(metric_id: str, session: Session = Depends(get_session)):
     if not m:
         raise HTTPException(404, "unknown metric")
     state = metric_state(m)
-    approved = [o for o in m.observations if o.review_status == "approved"]
-    superseded = {o.supersedes_id for o in approved if o.supersedes_id}
+    published = [o for o in m.observations if is_published(o)]
+    superseded = {o.supersedes_id for o in published if o.supersedes_id}
     return {
         "card": metric_card_json(m),
         "series": [observation_json(o) for o in state.series],
         "alternatives": [observation_json(o) for o in state.alternatives],
         "history": [dict(observation_json(o), superseded=o.id in superseded)
-                    for o in sorted(approved, key=lambda o: o.version, reverse=True)],
+                    for o in sorted(published, key=lambda o: o.version, reverse=True)],
     }
 
 

@@ -9,7 +9,7 @@ next to it, so the output folder is a complete site:
     python scripts/export_static.py site <data_dir> <out>    # site from a snapshot
 
 The snapshot shows exactly what the live site would show at that moment:
-only approved figures, the same sections, search and filters (done in the
+the same figures (unreviewed ones marked), sections, search and filters (done in the
 browser). Editing needs the real server, so the admin page says so.
 """
 from __future__ import annotations
@@ -48,7 +48,11 @@ def export_data(data: str) -> int:
         meta["static"] = {"generated_at": public.iso(utcnow()),
                           "repo": os.environ.get("GITHUB_REPOSITORY") or None,
                           "content_path": os.environ.get("CONTENT_PATH", "content"),
-                          "workflow": os.environ.get("PAGES_WORKFLOW", "pages.yml")}
+                          "workflow": os.environ.get("PAGES_WORKFLOW", "pages.yml"),
+                          "fetch_minutes": int(os.environ.get("FETCH_MINUTES") or 60)}
+        if os.environ.get("FETCH_MINUTES"):
+            meta["refresh_minutes"] = {"news": int(os.environ["FETCH_MINUTES"]),
+                                       "metrics": int(os.environ["FETCH_MINUTES"])}
         _write(f"{data}/meta.json", meta)
         for scope in s.scalars(select(Scope).where(Scope.enabled)):
             _write(f"{data}/dashboard-{scope.key}.json", public.dashboard(scope.key, s))
@@ -80,7 +84,8 @@ def _status(s) -> dict:
         if log.status not in ("ok",):
             row["errors"] += 1
             row["last_error"] = (log.error or log.status)[:300]
-    sources = [{"key": src.key, "name": src.name, "enabled": src.enabled, "group": (src.config or {}).get("group"),
+    sources = [{"key": src.key, "name": src.name, "enabled": src.enabled, "images": src.allow_images,
+                "group": (src.config or {}).get("group"),
                 **per.get(src.key, {"calls": 0, "errors": 0, "items": 0, "new": 0, "last_error": None})}
                for src in s.scalars(select(Source).where(Source.is_demo.is_(False)).order_by(Source.name))]
     metrics = [{"metric_id": m.metric_id, "name": {"ar": m.name_ar, "en": m.name_en},

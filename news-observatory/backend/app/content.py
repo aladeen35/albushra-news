@@ -18,7 +18,8 @@ Files (all optional; a missing file means "nothing"):
   approvals.json  [{metric_id, period_end, value, decision: approve|reject,
                     reviewer}]
   hidden.json     [{url, by}]
-  sources.json    {source_key: {"enabled": bool}}
+  sources.json    {source_key: {"enabled": bool, "images": bool}}
+  settings.json   {"fetch_minutes": int}
 
 The same rules as the admin API apply: bad entries are skipped and reported,
 never half-applied; a figure is approved only by someone other than the
@@ -41,6 +42,7 @@ from .ingest import store_article
 from .metrics import ObservationRejected, add_observation
 from .models import TOPICS, Article, ArticleTag, Metric, MetricObservation, Source
 from .providers.base import NormalizedArticle, parse_datetime
+from .schedule import build_due, fetch_minutes  # noqa: F401  (used by the Pages build)
 
 
 def _load(folder: Path, name: str, default):
@@ -79,7 +81,7 @@ def apply_sources(session: Session, folder: Path, report: dict) -> None:
                 key=key, name=str(site.get("name") or host)[:200], url=url,
                 kind="rss" if kind == "rss" else "news_api", provider=kind,
                 languages=[feed["language"]], regions=[], country=site.get("country") or None,
-                terms_url=url, reliability=0.6, allow_description=True, allow_images=False,
+                terms_url=url, reliability=0.6, allow_description=True, allow_images=True,
                 terms_reviewed=True, enabled=True,
                 license_note=f"Added by {site.get('added_by', 'an editor')} through the admin page.",
                 config={"group": site.get("group", "arab"), "feeds": [feed],
@@ -89,8 +91,12 @@ def apply_sources(session: Session, folder: Path, report: dict) -> None:
             report["skipped"].append(f"sites.json #{i + 1}: {exc}")
     for key, change in _load(folder, "sources.json", {}).items():
         source = session.scalar(select(Source).where(Source.key == key))
-        if source is not None and isinstance(change, dict) and "enabled" in change:
+        if source is None or not isinstance(change, dict):
+            continue
+        if "enabled" in change:
             source.enabled = bool(change["enabled"])
+        if "images" in change:
+            source.allow_images = bool(change["images"])
     session.commit()
 
 
@@ -183,3 +189,4 @@ def apply_figures_and_approvals(session: Session, folder: Path, report: dict) ->
 
 def new_report() -> dict:
     return {"sites": 0, "articles": 0, "hidden": 0, "figures": 0, "reviews": 0, "skipped": []}
+

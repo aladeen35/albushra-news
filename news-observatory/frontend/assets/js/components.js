@@ -34,7 +34,14 @@ export function valueBlock(obs, big = true) {
     obs.value_low !== null && obs.value_low !== undefined
       ? h("div", { class: "range" }, t("metric.range", {
           low: fmtNumber(obs.value_low), high: fmtNumber(obs.value_high) }))
-      : null);
+      : null,
+    obs.review_status === "pending" ? unreviewedNote(obs) : null);
+}
+
+// Figures go live as soon as they arrive; until an editor approves one, say so.
+export function unreviewedNote(obs) {
+  return h("p", { class: "unreviewed", role: "note" }, icon("alert", 15), " ",
+    t("metric.unreviewed", { producer: obs.producer }));
 }
 
 function factRow(label, ...value) {

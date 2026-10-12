@@ -76,3 +76,24 @@ def test_invalid_json_is_reported_not_ignored(session, tmp_path):
     import pytest
     with pytest.raises(ValueError, match="sites.json is not valid JSON"):
         content.apply_sources(session, tmp_path, content.new_report())
+
+
+def test_images_switch_in_sources_json(session, tmp_path):
+    _write(tmp_path, "sources.json", {"bbc": {"images": False}})
+    content.apply_sources(session, tmp_path, content.new_report())
+    src = session.scalar(select(Source).where(Source.key == "bbc"))
+    assert src.enabled and not src.allow_images
+
+
+def test_fetch_interval_setting_and_schedule(tmp_path):
+    from datetime import datetime, timedelta, timezone
+    assert content.fetch_minutes(tmp_path) == 20
+    _write(tmp_path, "settings.json", {"fetch_minutes": 60})
+    assert content.fetch_minutes(tmp_path) == 60
+    _write(tmp_path, "settings.json", {"fetch_minutes": 1})  # not offered: fall back
+    assert content.fetch_minutes(tmp_path) == 20
+    now = datetime(2026, 10, 12, 12, 0, tzinfo=timezone.utc)
+    assert content.build_due(None, now, 20)
+    assert content.build_due(now - timedelta(minutes=17), now, 20)
+    assert not content.build_due(now - timedelta(minutes=10), now, 20)
+    assert not content.build_due(now - timedelta(minutes=50), now, 60)

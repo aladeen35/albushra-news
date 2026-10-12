@@ -102,15 +102,24 @@ def add_observation(session: Session, metric: Metric, data: dict, *, entered_by:
     return obs
 
 
+# A figure is published as soon as it arrives. Until an editor approves it,
+# the page marks it "not reviewed; the source is responsible for it". A
+# rejected figure is withdrawn.
+PUBLISHED = ("approved", "pending")
+
+
+def is_published(o: MetricObservation) -> bool:
+    return o.review_status in PUBLISHED
+
+
 def _superseded_ids(observations: list[MetricObservation]) -> set[int]:
-    """Ids replaced by an approved correction. A pending correction replaces nothing yet."""
-    return {o.supersedes_id for o in observations
-            if o.supersedes_id and o.review_status == "approved"}
+    """Ids replaced by a published correction."""
+    return {o.supersedes_id for o in observations if o.supersedes_id and is_published(o)}
 
 
 def visible_history(metric: Metric) -> list[MetricObservation]:
-    """Approved, not superseded, oldest period first."""
-    obs = [o for o in metric.observations if o.review_status == "approved"]
+    """Published (approved or awaiting review), not superseded, oldest period first."""
+    obs = [o for o in metric.observations if is_published(o)]
     gone = _superseded_ids(obs)
     return sorted((o for o in obs if o.id not in gone),
                   key=lambda o: (o.period_end, o.published_at, o.version))

@@ -1,5 +1,5 @@
 // Router and shell. Hash routes keep the app a static bundle any server can host.
-import { h, t, settings, applySettings, loadLanguage, api, saveSettings, fmtDateTime } from "./core.js";
+import { every, h, t, settings, applySettings, loadLanguage, api, saveSettings, fmtDateTime } from "./core.js";
 import { setMeta, META, errorState, loading, flag } from "./components.js";
 import { homeView, sectionView, articleView, metricView, searchView, howView, settingsView,
   savedView, sourcesView, forYouView } from "./views.js";
@@ -10,15 +10,15 @@ import { adminView } from "./admin.js";
 const NAV = [
   ["#/", "nav.home", "home", null], ["#/foryou", "nav.foryou", "foryou", null],
   ["#/section/world", "section.world", "world", null], ["#/section/palestine", "section.palestine", null, "PS"],
-  ["#/section/sudan", "section.sudan", null, "SD"], ["#/section/sports", "section.sports", "sports", null],
+  ["#/section/saudi", "section.saudi", null, "SA"], ["#/section/sudan", "section.sudan", null, "SD"], ["#/section/sports", "section.sports", "sports", null],
   ["#/section/arab_world", "section.arab_world", "arab", null],
   ["#/section/islamic_world", "section.islamic_world", "islamic", null],
 ];
 // The phone tab bar, as in the reference design.
 const TABS = [
-  ["#/", "nav.home", "home", null], ["#/foryou", "nav.foryou", "foryou", null],
+  ["#/", "nav.home", "home", null], ["#/section/saudi", "section.saudi", null, "SA"],
   ["#/section/sudan", "section.sudan", null, "SD"], ["#/section/sports", "section.sports", "sports", null],
-  ["#/saved", "nav.saved", "saved", null],
+  ["#/foryou", "nav.foryou", "foryou", null], ["#/saved", "nav.saved", "saved", null],
 ];
 
 function navMark(iconName, code) {
@@ -67,7 +67,7 @@ function shell() {
     ...(META?.demo ? [h("div", { class: "demo-banner", role: "note" }, t("demo.banner"))] : []),
     ...(META?.static ? [h("div", { class: "static-banner", role: "note" },
       t(META.static.repo ? "static.banner.pages" : "static.banner",
-        { time: fmtDateTime(META.static.generated_at) }))] : []));
+        { time: fmtDateTime(META.static.generated_at), every: every(META.static.fetch_minutes) }))] : []));
   document.querySelector("nav.tabbar").replaceChildren(
     ...TABS.map(([href, key, ic, code]) => h("a", { href, "aria-current": route === href ? "page" : null },
       navMark(ic, code), h("span", {}, t(key)))));

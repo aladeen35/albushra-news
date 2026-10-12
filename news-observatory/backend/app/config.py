@@ -49,7 +49,7 @@ class Settings:
     reliefweb_appname: str = field(default_factory=lambda: os.environ.get("RELIEFWEB_APPNAME", ""))
 
     scheduler_enabled: bool = field(default_factory=lambda: _bool("SCHEDULER_ENABLED", True))
-    news_interval_minutes: int = field(default_factory=lambda: _int("NEWS_INTERVAL_MINUTES", 60))
+    news_interval_minutes: int = field(default_factory=lambda: _int("NEWS_INTERVAL_MINUTES", 20))
     metrics_interval_minutes: int = field(default_factory=lambda: _int("METRICS_INTERVAL_MINUTES", 60))
 
     rate_limit_per_minute: int = field(default_factory=lambda: _int("RATE_LIMIT_PER_MINUTE", 120))

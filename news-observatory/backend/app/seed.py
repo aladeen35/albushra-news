@@ -256,7 +256,7 @@ def _feed_source(key, name, url, country, reliability, feeds, kind="rss", group=
     return dict(key=key, name=name, url=url, kind=kind, provider="rss",
                 languages=sorted({f["language"] for f in feeds}), country=country,
                 terms_url=url, license_note=_FEED_NOTE, reliability=reliability,
-                enabled=True, terms_reviewed=False, allow_images=False,
+                enabled=True, terms_reviewed=False, allow_images=True,
                 config={"group": group, "feeds": feeds})
 
 
@@ -367,7 +367,7 @@ SOURCES += [
          provider="gdelt", languages=["ar", "en"], terms_url="https://www.gdeltproject.org/about.html",
          license_note="Open GDELT DOC 2.0 index. Headline, publisher domain and link only. The time "
                       "shown is when GDELT first saw the article. One call per 5 seconds.",
-         reliability=0.5, enabled=True, terms_reviewed=False, allow_images=False,
+         reliability=0.5, enabled=True, terms_reviewed=False, allow_images=True,
          config={"group": "international",
                  "queries": {"ar": ["السعودية"], "en": ["Saudi Arabia"]}}),
     dict(key="reliefweb_api", name="ReliefWeb API", url="https://reliefweb.int", kind="humanitarian",
@@ -375,7 +375,7 @@ SOURCES += [
          license_note="Needs RELIEFWEB_APPNAME approved by ReliefWeb; 1,000 calls a day. Title, "
                       "organisation, date and link only: report bodies belong to their publishers.",
          reliability=0.9, enabled=True, terms_reviewed=False, allow_description=False,
-         allow_images=False, config={"group": "humanitarian", "countries": ["SDN", "PSE"]}),
+         allow_images=True, config={"group": "humanitarian", "countries": ["SDN", "PSE"]}),
 ]
 
 

@@ -114,6 +114,14 @@ export function t(key, vars) {
   return s;
 }
 
+// "20 minutes", "an hour", "3 hours": how often the site refreshes.
+export function every(minutes) {
+  const n = Number(minutes) || 60;
+  if (n % 60) return t(n <= 10 ? "every.minutes_few" : "every.minutes", { n });
+  const hours = n / 60;
+  return hours === 1 ? t("every.hour") : hours === 2 ? t("every.2hours") : t("every.hours", { n: hours });
+}
+
 // Pick the current language from {ar, en} objects coming from the API.
 export function L(obj) {
   if (!obj) return "";

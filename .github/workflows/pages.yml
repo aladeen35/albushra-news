@@ -1,24 +1,51 @@
 name: البشرى للأخبار — النشر على GitHub Pages
 
-# Every hour: fetch real news from the sources, build the read-only site and
-# publish it on GitHub Pages (branch gh-pages).
+# Fetch real news and figures, build the read-only site and publish it on
+# GitHub Pages (branch gh-pages). The schedule wakes every 5 minutes; a quick
+# check then builds only when the interval chosen in the admin page
+# (content/settings.json, default 20 minutes) has passed since the last
+# publish. Saves from the admin page and manual runs always build.
 on:
   schedule:
-    - cron: '7 * * * *'
+    - cron: '*/5 * * * *'
   push:
     branches: [main]   # includes every save from the admin page (content/)
   workflow_dispatch:
 
 permissions:
   contents: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
+  actions: read
 
 jobs:
-  publish:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.due.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            content
+            news-observatory/backend
+      - name: هل حان وقت الجلب؟
+        id: due
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CONTENT_DIR: content
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then echo "build=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          export LAST_PUBLISHED="$(gh api "repos/${{ github.repository }}/commits/gh-pages" --jq .commit.committer.date 2>/dev/null || true)"
+          export OTHER_RUNS="$(gh api "repos/${{ github.repository }}/actions/workflows/pages.yml/runs?status=in_progress" \
+            --jq '[.workflow_runs[] | select(.id != ${{ github.run_id }})] | length' 2>/dev/null || echo 0)"
+          python3 news-observatory/backend/scripts/schedule_check.py >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: check
+    if: needs.check.outputs.build == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     defaults:
       run:
         working-directory: news-observatory/backend

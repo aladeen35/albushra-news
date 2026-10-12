@@ -2,7 +2,7 @@
 // to the repository's content/ folder through GitHub's API, and the hourly
 // build (also triggered by each commit) applies them. Signing in takes a
 // fine-grained GitHub token limited to this one repository.
-import { h, t, L, fmtDate, fmtDateTime, fmtNumber, fmtPeriod, externalLink } from "./core.js";
+import { h, t, L, every, fmtDate, fmtDateTime, fmtNumber, fmtPeriod, externalLink } from "./core.js";
 import { META, countryName, typeBadge, loading, errorState } from "./components.js";
 import { icon } from "./icons.js";
 
@@ -112,7 +112,8 @@ function signIn(rerender) {
 }
 
 // --- tabs -------------------------------------------------------------------
-const TABS = ["status", "addnews", "addsite", "reviews", "entry", "sources"];
+const TABS = ["status", "addnews", "addsite", "reviews", "entry", "sources", "settings"];
+const FETCH_CHOICES = [10, 15, 20, 30, 45, 60, 120, 180, 360];  // same list as app/content.py
 
 export function ghAdminView(params, rerender) {
   if (!token()) return signIn(rerender);
@@ -124,7 +125,7 @@ export function ghAdminView(params, rerender) {
       try { editor = (await gh("/user")).login; } catch { editor = "editor"; }
       who.textContent = t("admin.signed_in_as", { u: editor });
     }
-    await ({ status, addnews, addsite, reviews, entry, sources })[tab](body, rerender);
+    await ({ status, addnews, addsite, reviews, entry, sources, settings: settingsTab })[tab](body, rerender);
   })().catch(err => {
     if (err.status === 401) { saveToken(""); memoryToken = ""; rerender(); return; }
     body.replaceChildren(errorState(err));
@@ -343,19 +344,51 @@ async function entry(body) {
 async function sources(body, rerender) {
   const [st, overrides] = await Promise.all([loadData("status.json"), readContent("sources.json", {})]);
   const out = h("div");
-  body.replaceChildren(h("p", { class: "muted small" }, t("gh.sources.note")), out,
+  // One switch per setting; each change is its own commit, merged with the
+  // source's other settings.
+  const sw = (s, key, label, on, verbs) => {
+    const input = h("input", { type: "checkbox", role: "switch", checked: on, class: "switch-input" });
+    input.addEventListener("change", async () => {
+      try {
+        await update("sources.json", {}, o => ({ ...o, [s.key]: { ...(o[s.key] || {}), [key]: input.checked } }),
+          `${input.checked ? verbs[0] : verbs[1]}: ${s.name}`);
+        savedNote(out);
+      } catch (err) { input.checked = !input.checked; msg(out, err.message, false); }
+    });
+    return h("label", { class: "mini-switch" }, input, h("span", { class: "switch", "aria-hidden": "true" }),
+      h("span", { class: "small" }, label));
+  };
+  body.replaceChildren(h("p", { class: "muted small" }, t("gh.sources.note")),
+    h("p", { class: "muted small" }, t("gh.sources.images_note")), out,
     h("div", { class: "card list-card" }, (st?.sources || []).map(s => {
-      const on = overrides.data[s.key]?.enabled ?? s.enabled;
-      const input = h("input", { type: "checkbox", role: "switch", checked: on, class: "switch-input" });
-      input.addEventListener("change", async () => {
-        try {
-          await update("sources.json", {}, o => ({ ...o, [s.key]: { enabled: input.checked } }),
-            `${input.checked ? "تفعيل" : "إيقاف"} مصدر: ${s.name}`);
-          savedNote(out);
-        } catch (err) { input.checked = !input.checked; msg(out, err.message, false); }
-      });
-      return h("label", { class: "toggle-row" }, h("span", { class: "toggle-label" }, h("strong", {}, s.name),
-        h("span", { class: "muted small" }, `${s.items} ${t("admin.new")} · ${s.errors} ${t("admin.errors")}`)),
-        input, h("span", { class: "switch", "aria-hidden": "true" }));
+      const o = overrides.data[s.key] || {};
+      return h("div", { class: "toggle-row source-row" },
+        h("span", { class: "toggle-label" }, h("strong", {}, s.name),
+          h("span", { class: "muted small" }, `${s.items} ${t("admin.new")} · ${s.errors} ${t("admin.errors")}`)),
+        h("div", { class: "source-switches" },
+          sw(s, "enabled", t("gh.sources.on"), o.enabled ?? s.enabled, ["تفعيل مصدر", "إيقاف مصدر"]),
+          sw(s, "images", t("gh.sources.images"), o.images ?? s.images ?? true, ["عرض صور مصدر", "إخفاء صور مصدر"])));
     })));
+}
+
+async function settingsTab(body) {
+  const { data } = await readContent("settings.json", {});
+  const current = Number(data.fetch_minutes) || META.static.fetch_minutes || 20;
+  const select = h("select", { name: "fetch_minutes" }, FETCH_CHOICES.map(n =>
+    h("option", { value: n, selected: n === current }, `${t("gh.settings.every")} ${every(n)}`)));
+  const out = h("div");
+  const form = h("form", { class: "card form" },
+    h("h2", {}, t("gh.settings.fetch")),
+    field(t("gh.settings.fetch_label"), select),
+    h("p", { class: "muted small" }, t("gh.settings.fetch_note")),
+    h("button", { class: "btn", type: "submit" }, t("admin.save")), out);
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const n = Number(select.value);
+    try {
+      await update("settings.json", {}, o => ({ ...o, fetch_minutes: n }), `وقت الجلب: كل ${n} دقيقة`);
+      savedNote(out);
+    } catch (err) { msg(out, err.message, false); }
+  });
+  body.replaceChildren(form);
 }

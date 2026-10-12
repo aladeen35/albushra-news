@@ -10,6 +10,7 @@ publisher_country, never as the place the story is about.
 """
 from __future__ import annotations
 
+import html
 import re
 from datetime import datetime
 
@@ -231,6 +232,8 @@ class RssAdapter:
 
 
 _MEDIA = "{http://search.yahoo.com/mrss/}"
+_CONTENT_ENCODED = "{http://purl.org/rss/1.0/modules/content/}encoded"
+_IMG_SRC = re.compile(r"""<img\b[^>]*?\bsrc\s*=\s*["'](https://[^"'\s>]+)""", re.I)
 
 
 def _image(node) -> str | None:
@@ -247,6 +250,12 @@ def _image(node) -> str | None:
         kind = el.get("type", "image/") or "image/"
         if url and url.startswith("https://") and kind.startswith("image/"):
             return url
+    # Many feeds carry the photo only inside the item's HTML.
+    for tag in (_CONTENT_ENCODED, "description", f"{_ATOM}content", f"{_ATOM}summary",
+                f"{_RSS1}description"):
+        match = _IMG_SRC.search(node.findtext(tag) or "")
+        if match:
+            return html.unescape(match.group(1))
     return None
 
 

@@ -25,6 +25,7 @@ import export_static  # noqa: E402  (same folder)
 
 def main(out: str) -> int:
     folder = Path(os.environ.get("CONTENT_DIR", "../../content")).resolve()
+    os.environ["FETCH_MINUTES"] = str(content.fetch_minutes(folder))  # shown on the site
     report = content.new_report()
     init_db()
     with SessionLocal() as s:

@@ -24,6 +24,7 @@ const norm = s => (s || "").toLowerCase()
 function sectionCountries(meta, section) {
   if (!section || section === "world" || section === "sports") return null;
   if (section === "palestine") return ["PS"];
+  if (section === "saudi") return ["SA"];
   const region = meta.region_lists.find(r => r.key === section);
   if (region) return region.countries;
   const scope = meta.scopes.find(s => s.key === section);
@@ -46,7 +47,8 @@ async function queryArticles(p) {
   const keys = (p.get("sources") || "").split(",").filter(Boolean);
   const since = p.get("hours") ? Date.now() - Number(p.get("hours")) * 3600000 : null;
   const rows = all.filter(a =>
-    (!countries || a.event_countries.some(c => countries.includes(c))) &&
+    (!countries || a.event_countries.some(c => countries.includes(c)) ||
+      (p.get("section") === "saudi" && a.publisher.country === "SA" && !a.event_countries.length)) &&
     (p.get("section") !== "sports" || a.topics.includes("sports")) &&
     (!q || norm(a.title).includes(q) || norm(a.description).includes(q)) &&
     (!p.get("lang") || a.language === p.get("lang")) &&
