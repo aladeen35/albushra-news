@@ -1,5 +1,6 @@
 // Reusable pieces: number-type badge, metric card, article row, trend chart.
 import { icon } from "./icons.js";
+import { translateButton } from "./translate.js";
 import { h, t, L, other, settings, fmtNumber, fmtCompact, fmtSigned, fmtDate, fmtDateTime,
   fmtRelative, fmtPeriod, externalLink, langName, saved } from "./core.js";
 
@@ -145,6 +146,10 @@ function saveButton(a) {
 export function articleItem(a, { showDescription = true } = {}) {
   const dir = a.language === "ar" ? "rtl" : a.language === "en" ? "ltr" : "auto";
   const topic = a.topics.find(x => TOPIC_ICONS[x]);
+  const titleLink = h("a", { href: `#/article/${a.id}` }, a.title);
+  const title = h("h3", { class: "article-title", lang: a.language, dir }, titleLink);
+  const desc = showDescription && a.description ? h("p", { class: "article-desc", lang: a.language, dir }, a.description) : null;
+  const targets = [{ el: titleLink, block: title }, ...(desc ? [{ el: desc, block: desc }] : [])];
   return h("li", { class: `article card-article ${a.content_type}${a.image_url ? " has-image" : ""}` },
     a.image_url ? h("a", { class: "thumb", href: `#/article/${a.id}`, tabindex: "-1", "aria-hidden": "true" },
       h("img", { src: a.image_url, alt: "", loading: "lazy", referrerpolicy: "no-referrer" })) : null,
@@ -158,35 +163,39 @@ export function articleItem(a, { showDescription = true } = {}) {
         h("span", { class: "lang-tag", title: t("article.language") }, langName(a.language)),
         a.content_type !== "news" ? h("span", { class: "badge ctype" }, icon("report", 13), t(`ctype.${a.content_type}`)) : null,
         a.is_demo ? demoBadge() : null),
-      h("h3", { class: "article-title", lang: a.language, dir },
-        h("a", { href: `#/article/${a.id}` }, a.title)),
-      showDescription && a.description ? h("p", { class: "article-desc", lang: a.language, dir }, a.description) : null,
+      title,
+      desc,
       h("div", { class: "article-foot" },
         topic ? h("span", { class: "topic-chip" }, icon(TOPIC_ICONS[topic], 14), t(`topic.${topic}`)) : null,
         a.event_countries.slice(0, 3).map(countryChip),
         a.other_publishers ? h("span", { class: "muted small" }, t("article.others", { n: a.other_publishers })) : null,
         h("span", { class: "spacer" }),
         externalLink(a.url, t("article.original")),
+        translateButton(a.language, targets, { compact: true }),
         saveButton(a))));
 }
 
 // The day's lead: the highest-ranked story, given the width a front page gives it.
 export function leadStory(a) {
   const dir = a.language === "ar" ? "rtl" : a.language === "en" ? "ltr" : "auto";
+  const titleLink = h("a", { href: `#/article/${a.id}` }, a.title);
+  const title = h("h2", { class: "lead-title", lang: a.language, dir }, titleLink);
+  const desc = a.description ? h("p", { class: "lead-desc", lang: a.language, dir }, a.description) : null;
+  const targets = [{ el: titleLink, block: title }, ...(desc ? [{ el: desc, block: desc }] : [])];
   return h("article", { class: `lead-story${a.image_url ? " has-image" : ""}` },
     a.image_url ? h("a", { class: "lead-thumb", href: `#/article/${a.id}`, tabindex: "-1", "aria-hidden": "true" },
       h("img", { src: a.image_url, alt: "", referrerpolicy: "no-referrer" })) : null,
     h("div", { class: "lead-body" },
       h("span", { class: "kicker" }, t("home.lead")),
-      h("h2", { class: "lead-title", lang: a.language, dir }, h("a", { href: `#/article/${a.id}` }, a.title)),
-      a.description ? h("p", { class: "lead-desc", lang: a.language, dir }, a.description) : null,
+      title,
+      desc,
       h("div", { class: "article-meta" }, avatar(a.publisher.name), h("span", { class: "publisher" }, bdi(a.publisher.name)),
         flag(a.publisher.country), h("span", { class: "dot" }, "·"),
         h("time", { datetime: a.published_at, title: fmtDateTime(a.published_at) }, fmtRelative(a.published_at)),
         a.other_publishers ? h("span", { class: "muted" }, ` · ${t("article.others", { n: a.other_publishers })}`) : null,
         a.is_demo ? demoBadge() : null),
       h("div", { class: "actions" }, h("a", { class: "btn", href: `#/article/${a.id}` }, t("home.lead.read")),
-        externalLink(a.url, t("article.open_original")))));
+        externalLink(a.url, t("article.open_original")), translateButton(a.language, targets))));
 }
 
 // A strip of the latest headlines across the top of the front page.

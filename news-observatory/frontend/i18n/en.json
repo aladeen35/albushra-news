@@ -412,5 +412,14 @@
  "gh.site.https": "The address must start with https://",
  "gh.entry.note": "The figure goes to the review queue; someone other than you approves it.",
  "gh.sources.note": "Switch a source off to stop fetching it from the next build.",
- "static.banner.pages": "Last updated {time}. This site refreshes every hour."
+ "static.banner.pages": "Last updated {time}. This site refreshes every hour.",
+ "translate.to_en": "Translate to English",
+ "translate.to_ar": "Translate to Arabic",
+ "translate.show_original": "Show original",
+ "translate.working": "Translating…",
+ "translate.note": "Machine translation of the title and summary (MyMemory); it may be inaccurate.",
+ "translate.failed": "Translation is unavailable right now.",
+ "translate.google": "Translate it in Google",
+ "translate.page_en": "Read the full story in English",
+ "translate.page_ar": "Read the full story in Arabic"
 }

@@ -412,5 +412,14 @@
  "gh.site.https": "يجب أن يبدأ العنوان بـ https://",
  "gh.entry.note": "يذهب الرقم إلى قائمة المراجعة، ويعتمده شخص غيرك.",
  "gh.sources.note": "أوقف المصدر لتتوقف عملية جلبه بدءًا من البناء التالي.",
- "static.banner.pages": "آخر تحديث للموقع: {time}. يتحدث الموقع كل ساعة."
+ "static.banner.pages": "آخر تحديث للموقع: {time}. يتحدث الموقع كل ساعة.",
+ "translate.to_en": "ترجمة إلى الإنجليزية",
+ "translate.to_ar": "ترجمة إلى العربية",
+ "translate.show_original": "عرض النص الأصلي",
+ "translate.working": "جارٍ الترجمة…",
+ "translate.note": "ترجمة آلية للعنوان والملخص (MyMemory)، وقد لا تكون دقيقة.",
+ "translate.failed": "تعذّرت الترجمة الآن.",
+ "translate.google": "ترجمها في Google",
+ "translate.page_en": "اقرأ الخبر كاملًا بالإنجليزية",
+ "translate.page_ar": "اقرأ الخبر كاملًا بالعربية"
 }

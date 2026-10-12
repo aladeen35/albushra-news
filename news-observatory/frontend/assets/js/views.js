@@ -1,5 +1,6 @@
 // Pages. Each view returns a node (or a promise of one) for <main>.
 import { icon } from "./icons.js";
+import { translateButton, translatedPageUrl, targetLanguage } from "./translate.js";
 import { h, t, L, settings, saveSettings, saved, prefs, api, qs, fmtDate, fmtDateTime, fmtNumber,
   fmtPeriod, externalLink, langName } from "./core.js";
 import { META, metricCard, articleList, emptyState, errorState, loading, trendChart, typeBadge,
@@ -188,6 +189,8 @@ export async function articleView(id) {
   saveBtn.addEventListener("click", () => {
     saveBtn.textContent = saved.toggle(a) ? t("article.unsave") : t("article.save");
   });
+  const title = h("h1", { lang: a.language, dir }, a.title);
+  const lede = a.description ? h("p", { class: "lede", lang: a.language, dir }, a.description) : null;
   const shareBtn = h("button", { class: "btn ghost", type: "button" }, t("article.share"));
   shareBtn.addEventListener("click", async () => {
     try {
@@ -212,11 +215,14 @@ export async function articleView(id) {
   return h("article", { class: "article-page" },
     h("div", { class: "article-meta" }, a.content_type !== "news" ? h("span", { class: "badge ctype" }, t(`ctype.${a.content_type}`)) : null,
       a.is_demo ? demoBadge() : null),
-    h("h1", { lang: a.language, dir }, a.title),
-    a.description ? h("p", { class: "lede", lang: a.language, dir }, a.description) : null,
+    title,
+    lede,
     h("p", { class: "muted small" }, t("article.summary_note")),
     h("div", { class: "actions" },
       h("a", { class: "btn", href: a.url, target: "_blank", rel: "noopener noreferrer" }, t("article.open_original"), " ↗"),
+      translateButton(a.language, [{ el: title, block: title }, ...(lede ? [{ el: lede, block: lede }] : [])]),
+      h("a", { class: "btn ghost", href: translatedPageUrl(a.url, targetLanguage(a.language)), target: "_blank",
+        rel: "noopener noreferrer" }, t(`translate.page_${targetLanguage(a.language)}`), " ↗"),
       saveBtn, shareBtn),
     facts,
     data.source?.license_note ? h("p", { class: "muted small" }, t("article.terms"), " ", data.source.license_note) : null,

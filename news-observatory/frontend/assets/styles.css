@@ -415,3 +415,11 @@ footer a:hover { color: #fff; text-decoration: underline; }
 
 .static-banner { background: color-mix(in srgb, var(--brand-accent, #19b3a6) 14%, var(--surface)); color: var(--text);
   border-block-end: 1px solid var(--brand-accent, #19b3a6); text-align: center; padding: 6px 16px; font-size: .86rem; }
+
+/* Machine translation */
+.translate-btn[aria-busy="true"] { opacity: .6; cursor: progress; }
+.translate-btn[aria-pressed="true"] { color: var(--accent); }
+.mt-note { margin: 4px 0 0; color: var(--muted); font-size: .78rem; }
+.mt-note a { color: var(--accent); }
+.mt-note .icon { vertical-align: -2px; }
+.mt-note[hidden] { display: none; }
