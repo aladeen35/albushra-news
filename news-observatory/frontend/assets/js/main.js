@@ -52,7 +52,7 @@ function shell() {
   document.querySelector("header").replaceChildren(
     h("a", { class: "skip", href: "#main", onclick: e => { e.preventDefault(); document.getElementById("main").focus(); } }, t("a11y.skip")),
     h("div", { class: "brandbar" }, h("div", { class: "bar" },
-      h("a", { class: "brand", href: "#/" }, h("img", { src: "assets/icons/icon-64.png", alt: "", width: 38, height: 38 }),
+      h("a", { class: "brand", href: "#/" }, h("img", { src: "assets/icons/icon-128.png", alt: "", width: 40, height: 40 }),
         h("span", { class: "brand-text" }, h("strong", {}, t("app.name")), h("small", {}, t("app.tagline")))),
       search,
       h("nav", { class: "tools", "aria-label": t("nav.tools") },
@@ -74,7 +74,7 @@ function shell() {
   document.querySelector("footer").replaceChildren(h("div", { class: "footer-inner" },
     h("div", { class: "footer-grid" },
       h("div", { class: "footer-brand" },
-        h("a", { class: "brand", href: "#/" }, h("img", { src: "assets/icons/icon-64.png", alt: "", width: 40, height: 40 }),
+        h("a", { class: "brand", href: "#/" }, h("img", { src: "assets/icons/icon-128.png", alt: "", width: 44, height: 44 }),
           h("span", { class: "brand-text" }, h("strong", {}, t("app.name")), h("small", {}, t("app.tagline")))),
         h("p", {}, t("footer.about"))),
       h("nav", { "aria-label": t("footer.sections") }, h("h3", {}, t("footer.sections")),

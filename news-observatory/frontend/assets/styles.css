@@ -1,6 +1,6 @@
 /* البشرى للأخبار — light by default, after the reference design: a brand band
    across the top, white rounded cards, icon tabs, a phone tab bar. Colours
-   come from the logo (deep teal, signal teal, coral). Logical properties
+   come from the logo (navy and gold on a warm paper tone). Logical properties
    throughout so RTL and LTR share one sheet. */
 /* IBM Plex Sans Arabic (SIL Open Font License, see fonts/LICENSE-OFL.txt), served locally. */
 @font-face { font-family: "Plex"; font-style: normal; font-weight: 400; font-display: swap;
@@ -17,18 +17,18 @@
   src: url("fonts/plex-latin-700.woff2") format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
 
 :root {
-  --brand-1: #0b2440;
-  --brand-2: #0f4a63;
-  --brand-accent: #19b3a6;
+  --brand-1: #102347;
+  --brand-2: #1b3a6b;
+  --brand-accent: #c9a14a;
   --brand-ink: #ffffff;
-  --bg: #eef3f6;
+  --bg: #f6f2ea;
   --surface: #ffffff;
-  --surface-2: #f2f6f9;
-  --border: #dbe3ea;
+  --surface-2: #f5f1e9;
+  --border: #e4ddd0;
   --text: #12202f;
   --muted: #5b6b7d;
-  --accent: #0b7a72;
-  --accent-soft: #e0f4f2;
+  --accent: #1d4a8a;
+  --accent-soft: #e8eef8;
   --accent-ink: #ffffff;
   --coral: #e2553c;
   --t-verified: #0b7a72;
@@ -45,9 +45,9 @@
 }
 @media (prefers-color-scheme: dark) {
   :root[data-theme="auto"], :root:not([data-theme]) {
-    --brand-1: #082f45; --brand-2: #0e7f77;
+    --brand-1: #0b1a36; --brand-2: #16305a;
     --bg: #070b14; --surface: #0f1a2e; --surface-2: #15233d; --border: #233452;
-    --text: #e8eef6; --muted: #9aabc2; --accent: #19c3b6; --accent-soft: #10302f; --accent-ink: #04211f;
+    --text: #e8eef6; --muted: #9aabc2; --accent: #d6b260; --accent-soft: #2b2515; --accent-ink: #1a1408;
     --coral: #ff7a62; --t-verified: #19c3b6; --t-reported: #f2b544; --t-estimated: #7fb2ff;
     --t-projected: #c3a6ff; --ok: #3ccf91; --danger: #ff7a62;
     --shadow: 0 1px 0 rgba(255, 255, 255, .03) inset, 0 8px 24px rgba(0, 0, 0, .25);
@@ -55,9 +55,9 @@
   }
 }
 :root[data-theme="dark"] {
-  --brand-1: #082f45; --brand-2: #0e7f77;
+  --brand-1: #0b1a36; --brand-2: #16305a;
   --bg: #070b14; --surface: #0f1a2e; --surface-2: #15233d; --border: #233452;
-  --text: #e8eef6; --muted: #9aabc2; --accent: #19c3b6; --accent-soft: #10302f; --accent-ink: #04211f;
+  --text: #e8eef6; --muted: #9aabc2; --accent: #d6b260; --accent-soft: #2b2515; --accent-ink: #1a1408;
   --coral: #ff7a62; --t-verified: #19c3b6; --t-reported: #f2b544; --t-estimated: #7fb2ff;
   --t-projected: #c3a6ff; --ok: #3ccf91; --danger: #ff7a62;
   --shadow: 0 1px 0 rgba(255, 255, 255, .03) inset, 0 8px 24px rgba(0, 0, 0, .25);
@@ -88,11 +88,11 @@ bdi { unicode-bidi: isolate; }
 /* --- shell --- */
 header { position: sticky; top: 0; z-index: 10; }
 .brandbar { background: linear-gradient(110deg, var(--brand-1) 0%, var(--brand-2) 100%); color: var(--brand-ink);
-  border-block-end: 3px solid var(--brand-accent, #19b3a6); }
+  border-block-end: 3px solid var(--brand-accent, #c9a14a); }
 .bar, .sections-inner, main, .footer-inner { max-width: 1240px; margin-inline: auto; padding-inline: 16px; }
 .bar { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--brand-ink); text-decoration: none; white-space: nowrap; }
-.brand img { border-radius: 50%; box-shadow: 0 0 0 2px rgba(255, 255, 255, .5); }
+.brand img { border-radius: 22%; box-shadow: 0 0 0 1px rgba(201, 161, 74, .55); }
 .brand-text { display: grid; line-height: 1.2; }
 .brand-text strong { font-size: 1.15rem; }
 .brand-text small { font-size: .72rem; opacity: .85; }
@@ -218,6 +218,11 @@ ul.grid-articles { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 .card-article:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .thumb { display: block; aspect-ratio: 16 / 9; background: var(--surface-2); }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* In a single-column list on a wide screen the picture sits beside the text. */
+@media (min-width: 700px) {
+  ul.articles:not(.grid-articles) .card-article.has-image { display: grid; grid-template-columns: minmax(0, 1fr) 260px; }
+  ul.articles:not(.grid-articles) .card-article.has-image .thumb { order: 2; aspect-ratio: auto; height: 100%; min-height: 160px; }
+}
 .article-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .card-article.humanitarian_report { border-inline-start: 4px solid var(--t-estimated); }
 .article-meta { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; font-size: .8rem; color: var(--muted); }
@@ -365,7 +370,7 @@ h1 { font-weight: 700; }
 .numbers > h2 { margin-block-end: 14px; }
 .top-stories { display: grid; gap: 14px; }
 .lead-story { display: grid; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  overflow: hidden; box-shadow: var(--shadow); border-inline-start: 5px solid var(--brand-accent, #19b3a6); }
+  overflow: hidden; box-shadow: var(--shadow); border-inline-start: 5px solid var(--brand-accent, #c9a14a); }
 .lead-story.has-image { grid-template-columns: 1.1fr 1fr; border-inline-start: 1px solid var(--border); }
 .lead-thumb img { width: 100%; height: 100%; min-height: 240px; object-fit: cover; display: block; }
 .lead-body { padding: 22px 24px; display: grid; gap: 10px; align-content: start; }
@@ -376,7 +381,7 @@ h1 { font-weight: 700; }
 .lead-title a:hover { color: var(--accent); }
 .lead-desc { color: var(--muted); margin: 0; font-size: 1.02rem; }
 
-footer { background: var(--brand-1); color: rgba(255, 255, 255, .82); border-block-start: 3px solid var(--brand-accent, #19b3a6); }
+footer { background: var(--brand-1); color: rgba(255, 255, 255, .82); border-block-start: 3px solid var(--brand-accent, #c9a14a); }
 .footer-inner { padding-block: 32px 20px; }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 32px; }
 .footer-brand p { max-width: 46ch; font-size: .92rem; }
@@ -389,9 +394,9 @@ footer a:hover { color: #fff; text-decoration: underline; }
   font-size: .8rem; color: rgba(255, 255, 255, .6); }
 
 .login-wrap { min-height: 60vh; display: grid; place-items: center; }
-.login-card { width: min(420px, 100%); display: grid; gap: 14px; padding: 28px; border-block-start: 4px solid var(--brand-accent, #19b3a6); }
+.login-card { width: min(420px, 100%); display: grid; gap: 14px; padding: 28px; border-block-start: 4px solid var(--brand-accent, #c9a14a); }
 .login-head { display: grid; justify-items: center; text-align: center; gap: 6px; }
-.login-head img { border-radius: 50%; box-shadow: var(--shadow); }
+.login-head img { border-radius: 22%; box-shadow: var(--shadow); }
 .login-head h1 { margin: 6px 0 0; }
 .login-head p { margin: 0; }
 .btn.wide { justify-content: center; width: 100%; }
@@ -413,8 +418,8 @@ footer a:hover { color: #fff; text-decoration: underline; }
 .waiting-list li > a:first-child { color: var(--text); font-weight: 600; text-decoration: none; }
 @media (max-width: 860px) { .waiting-list li { grid-template-columns: 1fr; gap: 2px; } }
 
-.static-banner { background: color-mix(in srgb, var(--brand-accent, #19b3a6) 14%, var(--surface)); color: var(--text);
-  border-block-end: 1px solid var(--brand-accent, #19b3a6); text-align: center; padding: 6px 16px; font-size: .86rem; }
+.static-banner { background: color-mix(in srgb, var(--brand-accent, #c9a14a) 14%, var(--surface)); color: var(--text);
+  border-block-end: 1px solid var(--brand-accent, #c9a14a); text-align: center; padding: 6px 16px; font-size: .86rem; }
 
 /* Machine translation */
 .translate-btn[aria-busy="true"] { opacity: .6; cursor: progress; }

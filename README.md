@@ -1,3 +1,5 @@
+<p align="center"><img src="news-observatory/docs/logo-full.jpg" alt="البشرى — منصة إخبارية" width="280"></p>
+
 # البشرى للأخبار — Al-Bushra News
 
 أخبار موثّقة المصدر بالعربية والإنجليزية، مع لوحة أرقام إنسانية تعرض مصدر كل رقم وفترته ونوعه.

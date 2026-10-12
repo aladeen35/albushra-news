@@ -290,7 +290,7 @@
  "admin.scope.note": "A new crisis appears in the dashboard switcher and gets its own news queries. Add its indicators through the API (POST /api/admin/metrics).",
  "home.cadence": "News and indicators are refreshed every hour.",
  "home.cadence.minutes": "News is refreshed every {n} minutes.",
- "app.tagline": "News you can trace to its source",
+ "app.tagline": "News platform · From the event to the truth",
  "nav.foryou": "For you",
  "nav.sources": "Sources & topics",
  "section.sports": "Sports",
