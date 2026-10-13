@@ -70,5 +70,13 @@
   "decision": "approve",
   "reviewer": "aladeen35",
   "at": "2026-10-13T17:57:16.713Z"
+ },
+ {
+  "metric_id": "sd_returnees",
+  "period_end": "2026-08-26",
+  "value": 5145165,
+  "decision": "approve",
+  "reviewer": "aladeen35",
+  "at": "2026-10-13T17:57:21.024Z"
  }
 ]
