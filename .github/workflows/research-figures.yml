@@ -18,10 +18,9 @@ jobs:
         run: |
           import re, subprocess, urllib.request, html
           URLS = [
-            "https://www.ochaopt.org/content/reported-impact-snapshot-gaza-strip-30-september-2026",
-            "https://www.ochaopt.org/content/west-bank-monthly-snapshot-casualties-property-damage-and-displacement-august-2026",
-            "https://reliefweb.int/updates?search=%22Displacement%20and%20Return%20Snapshot%22%20Sudan",
-            "https://reliefweb.int/country/sdn",
+            "https://www.ochaopt.org/sites/default/files/Gaza_Reported_Impact_Snapshot_30_September_2026.pdf",
+            "https://www.ochaopt.org/sites/default/files/West%20Bank_info-graphic_14_September_2026.pdf",
+            "https://reliefweb.int/updates/rss.xml?search=%22Displacement%20and%20Return%20Snapshot%22",
           ]
           KEY = re.compile(r"(killed|fatalit|injur|displaced|returnee|returned|people in need|in need of)", re.I)
           for url in URLS:
@@ -31,6 +30,9 @@ jobs:
                   data = urllib.request.urlopen(req, timeout=40).read()
               except Exception as e:
                   print("FAILED:", e); continue
+              if "rss.xml" in url:
+                  for t, l in re.findall(r"<title>(.*?)</title>\s*<link>(.*?)</link>", data.decode("utf-8", "replace"))[:15]: print("ITEM", t, l)
+                  continue
               if url.endswith(".pdf"):
                   open("/tmp/x.pdf", "wb").write(data)
                   text = subprocess.run(["pdftotext", "-layout", "/tmp/x.pdf", "-"], capture_output=True, text=True).stdout
@@ -42,7 +44,8 @@ jobs:
               m = re.search(r"(Published|Issued|Date)[^\n]{0,80}", text)
               if m: print("DATE:", " ".join(m.group(0).split()))
               seen = 0
-              for s in re.split(r"(?<=[.!?])\s+|\n{2,}", text):
+              parts = text.splitlines() if url.endswith(".pdf") else re.split(r"(?<=[.!?])\s+|\n{2,}", text)
+              for s in parts:
                   s = " ".join(s.split())
                   if KEY.search(s) and re.search(r"\d", s) and 20 < len(s) < 600:
                       print("-", s); seen += 1
