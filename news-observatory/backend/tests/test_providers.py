@@ -331,3 +331,36 @@ def test_page_meta_from_open_graph_and_json_ld():
         fetch_page_meta("ftp://x.org/a", page, check_host=False)
     with pytest.raises(ProviderError):
         fetch_page_meta("https://127.0.0.1/admin", page)  # never a proxy into private networks
+
+
+OCHA_LIST = '<a href="/content/humanitarian-situation-report-25-september-2026">x</a>' \
+            '<a href="/content/humanitarian-situation-report-2-october-2026">y</a>'
+OCHA_REPORT = """<p>According to the Ministry of Health in Gaza, which operates under the de facto authorities,
+29 Palestinians were reported killed, including those who died of wounds and had their bodies retrieved from
+under the rubble, and 147 people were injured between 23 and 30 September. These figures bring the overall
+reported casualty toll since the announcement of a ceasefire agreement on 10 October 2025 to 1,431 fatalities
+and 5,026 injuries, according to MoH.</p>"""
+
+
+def test_ocha_weekly_report_totals():
+    from app.providers import ocha
+    ocha.reset_cache()
+    seen = []
+
+    def handler(request):
+        seen.append(str(request.url))
+        if "2-october-2026" in str(request.url):
+            return httpx.Response(200, html=OCHA_REPORT)
+        return httpx.Response(200, html=OCHA_LIST)
+    adapter = ocha.OchaSitrepAdapter(client(handler))
+    killed = adapter.latest({"measure": "fatalities"}).items[0]
+    injured = adapter.latest({"measure": "injuries"}).items[0]
+    assert (killed.value, injured.value) == (1431, 5026)
+    assert killed.period_start == date(2025, 10, 10) and killed.period_end == date(2026, 9, 30)
+    assert killed.published_at == date(2026, 10, 2) and killed.source_url.endswith("2-october-2026")
+    assert killed.producer == "OCHA oPt" and killed.coverage_key.endswith(":fatalities")
+    assert sum("2-october-2026" in u for u in seen) == 1  # one download for both cards
+    assert ocha.parse_report("no totals here", date(2026, 10, 2)) is None
+    ocha.reset_cache()
+    with pytest.raises(ProviderError):
+        ocha.OchaSitrepAdapter(client(lambda r: httpx.Response(200, html="<p>nothing</p>"))).latest({})

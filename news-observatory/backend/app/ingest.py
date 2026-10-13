@@ -286,14 +286,19 @@ def _metric_channel(metric: Metric, settings):
         return "acled", (lambda: AcledAdapter().window(cfg)) if settings.provider_configured("acled") else None
     if metric.provider == "hapi":
         return "hapi", (lambda: HapiAdapter().latest(cfg)) if settings.provider_configured("hapi") else None
+    if metric.provider == "ocha_sitrep":  # public pages, no key
+        from .providers.ocha import OchaSitrepAdapter
+        return "ocha_sitrep", lambda: OchaSitrepAdapter().latest(cfg)
     return metric.provider, None
 
 
 def ingest_metrics(session: Session) -> dict:
+    from .providers.ocha import reset_cache
+    reset_cache()  # one read of OCHA's latest report per run, shared by its cards
     settings = get_settings()
     summary = {}
-    for metric in session.scalars(select(Metric).where(Metric.enabled,
-                                                       Metric.provider.in_(["dtm", "acled", "hapi"]))):
+    for metric in session.scalars(select(Metric).where(
+            Metric.enabled, Metric.provider.in_(["dtm", "acled", "hapi", "ocha_sitrep"]))):
         provider, fetch = _metric_channel(metric, settings)
         if fetch is None:
             _log(session, metric.metric_id, provider, "skipped", error="provider not configured")

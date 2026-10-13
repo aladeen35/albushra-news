@@ -47,3 +47,14 @@ def no_network(monkeypatch):
         raise httpx.ConnectError("network disabled in tests", request=request)
     monkeypatch.setattr(httpx.HTTPTransport, "handle_request", refuse)
     monkeypatch.setattr("app.providers.base.time.sleep", lambda s: None)
+
+
+@pytest.fixture(autouse=True)
+def _ocha_offline(monkeypatch):
+    """The OCHA reader needs no key, so it would run in every metrics test: keep it offline."""
+    import httpx
+    from app.providers import ocha
+    from app.providers.base import HttpClient
+    monkeypatch.setattr(ocha, "HttpClient", lambda retries=1: HttpClient(
+        transport=httpx.MockTransport(lambda r: httpx.Response(503)), retries=0, backoff=0))
+    ocha.reset_cache()

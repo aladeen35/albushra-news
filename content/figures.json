@@ -1,1 +1,54 @@
-[]
+[
+ {
+  "metric_id": "ps_gaza_killed",
+  "value": 1431,
+  "period_start": "2025-10-10",
+  "period_end": "2026-09-30",
+  "published_at": "2026-10-02",
+  "source_url": "https://www.ochaopt.org/content/humanitarian-situation-report-2-october-2026",
+  "coverage_key": "ocha:gaza:moh-since-ceasefire-2025-10-10:fatalities",
+  "number_type": "reported",
+  "producer": "OCHA oPt",
+  "period_label": "منذ إعلان وقف إطلاق النار في 2025-10-10 — بحسب وزارة الصحة في غزة",
+  "entered_by": "Claude (بحث في المصادر الرسمية)"
+ },
+ {
+  "metric_id": "ps_gaza_injured",
+  "value": 5026,
+  "period_start": "2025-10-10",
+  "period_end": "2026-09-30",
+  "published_at": "2026-10-02",
+  "source_url": "https://www.ochaopt.org/content/humanitarian-situation-report-2-october-2026",
+  "coverage_key": "ocha:gaza:moh-since-ceasefire-2025-10-10:injuries",
+  "number_type": "reported",
+  "producer": "OCHA oPt",
+  "period_label": "منذ إعلان وقف إطلاق النار في 2025-10-10 — بحسب وزارة الصحة في غزة",
+  "entered_by": "Claude (بحث في المصادر الرسمية)"
+ },
+ {
+  "metric_id": "ps_people_in_need",
+  "value": 3000000,
+  "period_start": "2025-12-16",
+  "period_end": "2026-12-31",
+  "published_at": "2025-12-16",
+  "source_url": "https://www.un.org/unispal/wp-content/uploads/2025/12/OPT_Flash_Appeal_2026_At_a_Glance_EN.pdf",
+  "coverage_key": "ocha:opt:flash-appeal-2026:people-in-need",
+  "number_type": "estimated",
+  "producer": "OCHA oPt",
+  "period_label": "النداء العاجل لعام 2026 (صدر في ديسمبر 2025)",
+  "entered_by": "Claude (بحث في المصادر الرسمية)"
+ },
+ {
+  "metric_id": "sd_returnees",
+  "value": 5145165,
+  "period_start": "2026-08-01",
+  "period_end": "2026-08-26",
+  "published_at": "2026-09-21",
+  "source_url": "https://dtm.iom.int/reports/dtm-sudan-displacement-and-return-snapshot-9",
+  "coverage_key": "dtm:sudan:returnees:snapshot",
+  "number_type": "estimated",
+  "producer": "IOM DTM",
+  "period_label": "لقطة النزوح والعودة رقم 9 (1–26 أغسطس 2026)",
+  "entered_by": "Claude (بحث في المصادر الرسمية)"
+ }
+]

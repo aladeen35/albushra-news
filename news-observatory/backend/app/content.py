@@ -151,6 +151,13 @@ def apply_figures_and_approvals(session: Session, folder: Path, report: dict) ->
             metric = session.scalar(select(Metric).where(Metric.metric_id == item["metric_id"]))
             if metric is None:
                 raise ValueError(f"unknown metric {item['metric_id']}")
+            same = session.scalar(select(MetricObservation.id).where(
+                MetricObservation.metric_pk == metric.id,
+                MetricObservation.period_end == _day(item["period_end"]),
+                MetricObservation.coverage_key == item["coverage_key"],
+                MetricObservation.value == float(item["value"])).limit(1))
+            if same:
+                continue  # an automatic source already brought this exact figure
             add_observation(session, metric, {
                 "value": float(item["value"]), "period_start": _day(item["period_start"]),
                 "period_end": _day(item["period_end"]), "published_at": _day(item["published_at"]),

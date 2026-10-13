@@ -115,11 +115,13 @@ METRICS = [
          population_en="Palestinians killed, per the source's definition and period",
          default_number_type="reported", primary_producer="OCHA oPt",
          primary_source_url=_OCHA_CASUALTIES,
-         methodology_ar="يُدخل من تحديثات OCHA المنشورة مع ذكر الجهة التي أبلغت عن الرقم. ترد أرقام التحديثات "
-                        "الإنسانية مبلّغًا عنها قبل التحقق المستقل.",
-         methodology_en="Entered from published OCHA updates, naming the body that reported the figure. Figures "
-                        "in humanitarian updates are reported before independent verification.",
-         max_age_days=14, provider="manual"),
+         methodology_ar="يُقرأ آليًا من التقرير الأسبوعي لـ OCHA عن الوضع الإنساني، الذي ينقل حصيلة وزارة الصحة في "
+                        "غزة منذ إعلان وقف إطلاق النار، ويُستبدل عند صدور تقرير أحدث. الأرقام مبلّغ عنها قبل التحقق المستقل.",
+         methodology_en="Read automatically from OCHA's weekly Humanitarian Situation Report, which cites the Gaza "
+                        "Ministry of Health's totals since the ceasefire announcement; replaced when a newer report "
+                        "appears. Figures are reported before independent verification.",
+         max_age_days=14, provider="ocha_sitrep",
+         provider_config={"measure": "fatalities"}),
     dict(metric_id="ps_gaza_injured", scope_key="palestine", display_order=20,
          name_ar="الإصابات في غزة", name_en="Injuries in Gaza",
          unit_ar="مصاب", unit_en="injured people",
@@ -128,9 +130,12 @@ METRICS = [
          population_en="Palestinians injured, per the source's definition and period",
          default_number_type="reported", primary_producer="OCHA oPt",
          primary_source_url=_OCHA_CASUALTIES,
-         methodology_ar="يُدخل من تحديثات OCHA المنشورة. بطاقة مستقلة عن الوفيات ولا تُجمع معها.",
-         methodology_en="Entered from published OCHA updates. Kept separate from fatalities, never summed.",
-         max_age_days=14, provider="manual"),
+         methodology_ar="يُقرأ آليًا من التقرير الأسبوعي لـ OCHA (حصيلة وزارة الصحة في غزة منذ إعلان وقف إطلاق "
+                        "النار). بطاقة مستقلة عن الوفيات ولا تُجمع معها.",
+         methodology_en="Read automatically from OCHA's weekly report (Gaza MoH totals since the ceasefire "
+                        "announcement). Kept separate from fatalities, never summed.",
+         max_age_days=14, provider="ocha_sitrep",
+         provider_config={"measure": "injuries"}),
     dict(metric_id="ps_gaza_idps", scope_key="palestine", display_order=30,
          name_ar="النازحون في غزة", name_en="Displaced people in Gaza",
          unit_ar="شخص", unit_en="people",
