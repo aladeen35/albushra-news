@@ -9,8 +9,9 @@ import { adminView } from "./admin.js";
 // [href, label key, icon name or null, flag code or null]
 const NAV = [
   ["#/", "nav.home", "home", null], ["#/foryou", "nav.foryou", "foryou", null],
-  ["#/section/world", "section.world", "world", null], ["#/section/palestine", "section.palestine", null, "PS"],
-  ["#/section/saudi", "section.saudi", null, "SA"], ["#/section/sudan", "section.sudan", null, "SD"], ["#/section/sports", "section.sports", "sports", null],
+  ["#/section/world", "section.world", "world", null], ["#/section/sudan", "section.sudan", null, "SD"],
+  ["#/section/palestine", "section.palestine", null, "PS"], ["#/section/saudi", "section.saudi", null, "SA"],
+  ["#/section/sports", "section.sports", "sports", null],
   ["#/section/arab_world", "section.arab_world", "arab", null],
   ["#/section/islamic_world", "section.islamic_world", "islamic", null],
 ];

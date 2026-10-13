@@ -99,9 +99,9 @@ export function homeView(params) {
   });
 
   const quick = h("div", { class: "quick" },
+    h("a", { class: "quick-link", href: "#/section/sudan" }, flag("SD", { size: "lg" }), t("section.sudan")),
     h("a", { class: "quick-link", href: "#/section/palestine" }, flag("PS", { size: "lg" }), t("section.palestine")),
     h("a", { class: "quick-link", href: "#/section/saudi" }, flag("SA", { size: "lg" }), t("section.saudi")),
-    h("a", { class: "quick-link", href: "#/section/sudan" }, flag("SD", { size: "lg" }), t("section.sudan")),
     h("a", { class: "quick-link", href: "#/section/sports" }, icon("sports", 24), t("section.sports")),
     h("a", { class: "quick-link", href: "#/foryou" }, icon("foryou", 24), t("nav.foryou")));
 
