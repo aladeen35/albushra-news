@@ -3,10 +3,12 @@ package sa.albushra.news;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceError;
@@ -15,7 +17,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.core.content.FileProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * The newsroom in a WebView. Pages from the configured server stay inside the
@@ -128,6 +134,39 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String version() {
             return BuildConfig.VERSION_NAME;
+        }
+
+        /**
+         * A story card from the page (a PNG data URL) handed to the system
+         * share sheet as an image file, with its caption, so WhatsApp and the
+         * rest receive the picture itself. The WebView has no navigator.share.
+         */
+        @JavascriptInterface
+        public boolean shareImage(String dataUrl, String text) {
+            try {
+                String data = dataUrl.substring(dataUrl.indexOf(',') + 1);
+                byte[] bytes = Base64.decode(data, Base64.DEFAULT);
+                File dir = new File(getCacheDir(), "share");
+                if (!dir.isDirectory() && !dir.mkdirs()) return false;
+                File[] old = dir.listFiles();
+                if (old != null) for (File f : old) //noinspection ResultOfMethodCallIgnored
+                    f.delete();
+                File file = new File(dir, "albushra-news-" + System.currentTimeMillis() + ".png");
+                try (FileOutputStream out = new FileOutputStream(file)) {
+                    out.write(bytes);
+                }
+                Uri uri = FileProvider.getUriForFile(MainActivity.this, getPackageName() + ".fileprovider", file);
+                Intent send = new Intent(Intent.ACTION_SEND);
+                send.setType("image/png");
+                send.putExtra(Intent.EXTRA_STREAM, uri);
+                if (text != null && !text.isEmpty()) send.putExtra(Intent.EXTRA_TEXT, text);
+                send.setClipData(ClipData.newRawUri(file.getName(), uri));
+                send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                runOnUiThread(() -> startActivity(Intent.createChooser(send, null)));
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 // Pages. Each view returns a node (or a promise of one) for <main>.
 import { icon } from "./icons.js";
 import { translateButton, translatedPageUrl, targetLanguage } from "./translate.js";
+import { shareCardButton, storyLink } from "./sharecard.js";
 import { h, t, every, L, settings, saveSettings, saved, prefs, api, qs, fmtDate, fmtDateTime, fmtNumber,
   fmtPeriod, externalLink, langName } from "./core.js";
 import { META, metricCard, articleList, emptyState, errorState, loading, trendChart, typeBadge,
@@ -194,8 +195,8 @@ export async function articleView(id) {
   const shareBtn = h("button", { class: "btn ghost", type: "button" }, t("article.share"));
   shareBtn.addEventListener("click", async () => {
     try {
-      if (navigator.share) await navigator.share({ title: a.title, url: a.url });
-      else { await navigator.clipboard.writeText(a.url); shareBtn.textContent = t("article.copied"); }
+      if (navigator.share) await navigator.share({ title: a.title, url: storyLink(a) });
+      else { await navigator.clipboard.writeText(storyLink(a)); shareBtn.textContent = t("article.copied"); }
     } catch { /* dismissed */ }
   });
   const facts = h("dl", { class: "facts" },
@@ -223,7 +224,7 @@ export async function articleView(id) {
       translateButton(a.language, [{ el: title, block: title }, ...(lede ? [{ el: lede, block: lede }] : [])]),
       h("a", { class: "btn ghost", href: translatedPageUrl(a.url, targetLanguage(a.language)), target: "_blank",
         rel: "noopener noreferrer" }, t(`translate.page_${targetLanguage(a.language)}`), " ↗"),
-      saveBtn, shareBtn),
+      shareCardButton(a, { compact: false }), saveBtn, shareBtn),
     facts,
     data.source?.license_note ? h("p", { class: "muted small" }, t("article.terms"), " ", data.source.license_note) : null,
     data.same_story.length ? section("article.same_story", articleList(data.same_story, { showDescription: false })) : null,

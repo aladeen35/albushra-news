@@ -452,3 +452,13 @@ footer a:hover { color: #fff; text-decoration: underline; }
 .style-switch { color: var(--brand-ink) !important; border-color: rgba(255, 255, 255, .5) !important; }
 .style-switch:hover { background: rgba(255, 255, 255, .15) !important; }
 @media (max-width: 860px) { .style-switch span { display: none; } }
+
+/* Story card preview */
+.share-dialog { width: min(560px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 0; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--surface); color: var(--text); box-shadow: 0 20px 60px rgba(0, 0, 0, .35); }
+.share-dialog::backdrop { background: rgba(10, 14, 22, .55); }
+.share-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-block-end: 1px solid var(--border); }
+.share-body { padding: 14px; overflow: auto; max-height: calc(100vh - 90px); }
+.share-preview { display: block; max-width: 100%; max-height: 56vh; width: auto; height: auto; margin-inline: auto; border: 1px solid var(--border); }
+.share-caption { white-space: pre-line; color: var(--muted); overflow-wrap: anywhere; }
+.share-body .actions { margin-block: 8px; }

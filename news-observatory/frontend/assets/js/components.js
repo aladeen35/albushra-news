@@ -1,6 +1,7 @@
 // Reusable pieces: number-type badge, metric card, article row, trend chart.
 import { icon } from "./icons.js";
 import { translateButton } from "./translate.js";
+import { shareCardButton } from "./sharecard.js";
 import { h, t, L, other, settings, fmtNumber, fmtCompact, fmtSigned, fmtDate, fmtDateTime,
   fmtRelative, fmtPeriod, externalLink, langName, saved } from "./core.js";
 
@@ -179,6 +180,7 @@ export function articleItem(a, { showDescription = true } = {}) {
         h("span", { class: "spacer" }),
         externalLink(a.url, t("article.original")),
         translateButton(a.language, targets, { compact: true }),
+        shareCardButton(a),
         saveButton(a))));
 }
 
@@ -202,7 +204,8 @@ export function leadStory(a) {
         a.other_publishers ? h("span", { class: "muted" }, ` · ${t("article.others", { n: a.other_publishers })}`) : null,
         a.is_demo ? demoBadge() : null),
       h("div", { class: "actions" }, h("a", { class: "btn", href: `#/article/${a.id}` }, t("home.lead.read")),
-        externalLink(a.url, t("article.open_original")), translateButton(a.language, targets))));
+        externalLink(a.url, t("article.open_original")), translateButton(a.language, targets),
+        shareCardButton(a, { compact: false }))));
 }
 
 // A strip of the latest headlines across the top of the front page.

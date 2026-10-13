@@ -453,5 +453,19 @@
  "style.to_modern": "Switch to the modern look",
  "style.to_paper": "Switch to the print edition",
  "app.motto": "From the event to the truth",
- "app.edition": "News platform · Digital edition"
+ "app.edition": "News platform · Digital edition",
+ "share.card.button": "Share as a card",
+ "share.card.title": "Story card",
+ "share.card.drawing": "Preparing the card…",
+ "share.card.share": "Share",
+ "share.card.save": "Save image",
+ "share.card.copy": "Copy text",
+ "share.card.copied": "Text and link copied.",
+ "share.card.saved_and_copied": "Image saved and text copied; attach the image and paste the text with it.",
+ "share.card.failed": "Sharing is not available right now.",
+ "share.card.close": "Close",
+ "share.card.from": "From",
+ "share.card.read": "Read the full story in Al-Bushra News",
+ "share.card.source": "Source: {name}",
+ "share.card.caption": "Read the full story in Al-Bushra News:"
 }

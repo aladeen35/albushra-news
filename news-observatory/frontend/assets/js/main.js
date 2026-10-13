@@ -40,6 +40,14 @@ function todayLine() {
   } catch { return ""; }
 }
 
+// The print edition's masthead stays on screen and tightens once the reader
+// scrolls; two thresholds so the change in height cannot make it flicker.
+addEventListener("scroll", () => {
+  const root = document.documentElement, y = scrollY;
+  if (y > 140 && !root.classList.contains("scrolled")) root.classList.add("scrolled");
+  else if (y < 20 && root.classList.contains("scrolled")) root.classList.remove("scrolled");
+}, { passive: true });
+
 function shell() {
   const route = location.hash.split("?")[0] || "#/";
   const langBtn = h("button", { class: "btn ghost lang-switch", type: "button",

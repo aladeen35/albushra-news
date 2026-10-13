@@ -453,5 +453,19 @@
  "style.to_modern": "التبديل إلى الشكل الحديث",
  "style.to_paper": "التبديل إلى الطبعة الورقية",
  "app.motto": "من الحدث إلى الحقيقة",
- "app.edition": "منصة إخبارية · الطبعة الرقمية"
+ "app.edition": "منصة إخبارية · الطبعة الرقمية",
+ "share.card.button": "مشاركة كبطاقة",
+ "share.card.title": "بطاقة الخبر",
+ "share.card.drawing": "جارٍ تجهيز البطاقة…",
+ "share.card.share": "مشاركة",
+ "share.card.save": "حفظ الصورة",
+ "share.card.copy": "نسخ النص",
+ "share.card.copied": "نُسخ النص مع الرابط.",
+ "share.card.saved_and_copied": "حُفظت الصورة ونُسخ النص؛ أرفقها حيث تريد والصق النص معها.",
+ "share.card.failed": "تعذّرت المشاركة الآن.",
+ "share.card.close": "إغلاق",
+ "share.card.from": "عن",
+ "share.card.read": "اقرأ الخبر كاملًا في تطبيق البشرى للأخبار",
+ "share.card.source": "المصدر: {name}",
+ "share.card.caption": "اقرأ الخبر كاملًا في البشرى للأخبار:"
 }

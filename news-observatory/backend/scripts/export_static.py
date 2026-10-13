@@ -14,6 +14,7 @@ browser). Editing needs the real server, so the admin page says so.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -62,6 +63,9 @@ def export_data(data: str) -> int:
         articles = []
         for a in rows:
             item = public.article_json(a)
+            # Database ids change with every rebuild; an id made from the story's
+            # address keeps shared and saved links working across builds.
+            item["id"] = "s" + hashlib.sha1(a.canonical_url.encode("utf-8")).hexdigest()[:12]
             item["reliability"] = a.source.reliability if a.source else 0.5
             articles.append(item)
         _write(f"{data}/articles.json", articles)
