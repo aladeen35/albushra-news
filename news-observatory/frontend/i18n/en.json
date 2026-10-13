@@ -499,5 +499,17 @@
  "eq.title": "This week's earthquakes in the region",
  "eq.none": "No earthquakes of magnitude 4.5 or more in the region this week.",
  "eq.source": "Magnitude 4.5+ across the Middle East, Africa and Asia; data from",
- "eq.failed": "Earthquake data is unavailable right now."
+ "eq.failed": "Earthquake data is unavailable right now.",
+ "pr.title": "Prayer times",
+ "pr.city": "City",
+ "pr.fajr": "Fajr",
+ "pr.sunrise": "Sunrise",
+ "pr.dhuhr": "Dhuhr",
+ "pr.asr": "Asr",
+ "pr.maghrib": "Maghrib",
+ "pr.isha": "Isha",
+ "pr.next": "next",
+ "pr.ah": "AH",
+ "pr.failed": "Prayer times are unavailable right now.",
+ "pr.source": "In the city's local time; method: {method}. Data from"
 }

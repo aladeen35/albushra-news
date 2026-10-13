@@ -483,3 +483,15 @@ footer a:hover { color: #fff; text-decoration: underline; }
 .mag { flex: none; min-width: 42px; text-align: center; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: #f2b544; color: #1d1b17; }
 .mag.m6, .mag.m7 { background: #c4432c; color: #fff; }
 .mag.m5 { background: #e88a2e; color: #1d1b17; }
+.today-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; margin-block: 8px 24px; }
+.today-row > .block { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; }
+.today-row h2 { font-size: 1.1rem; margin: 0; }
+.today-row .extras-head { margin-block-end: 8px; }
+.prayer-city { min-height: 34px; padding: 2px 8px; font-size: .9rem; max-width: 55%; }
+.hijri { margin: 0 0 6px; font-weight: 600; color: var(--muted); }
+.prayer-table { width: 100%; border-collapse: collapse; }
+.prayer-table th, .prayer-table td { padding: 5px 4px; border-block-end: 1px solid var(--border); background: none; font-weight: 600; }
+.prayer-table td { text-align: end; font-variant-numeric: tabular-nums; }
+.prayer-table tr.next th, .prayer-table tr.next td { color: var(--accent); font-weight: 800; }
+.next-tag { font-size: .7rem; margin-inline-start: 6px; padding: 0 6px; border: 1px solid currentColor; border-radius: 999px; }
+@media (max-width: 960px) { .today-row { grid-template-columns: 1fr; } }

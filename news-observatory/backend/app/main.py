@@ -63,7 +63,7 @@ app.include_router(admin.auth_router)
 
 CSP = ("default-src 'self'; img-src 'self' data: https:; style-src 'self'; script-src 'self'; "
        "connect-src 'self' https://api.mymemory.translated.net https://api.open-meteo.com https://cdn.jsdelivr.net "
-       "https://latest.currency-api.pages.dev https://earthquake.usgs.gov; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
+       "https://latest.currency-api.pages.dev https://earthquake.usgs.gov https://api.aladhan.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
 
 
 @app.middleware("http")

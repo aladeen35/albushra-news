@@ -182,3 +182,57 @@ export function quakesBox() {
   })();
   return box;
 }
+
+// --- prayer times ------------------------------------------------------------
+// From Aladhan (aladhan.com), no key. Without a `method` the service applies
+// the authority nearest the city (Umm al-Qura in Saudi Arabia, the Egyptian
+// authority in Egypt and Sudan, and so on); the box names the method used.
+const PRAYERS = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
+const PRAYER_KEY = "obs.prayer_city";
+
+export function prayerBox() {
+  const box = h("section", { class: "block prayer" });
+  let cityId;
+  try { cityId = localStorage.getItem(PRAYER_KEY); } catch { /* no storage */ }
+  if (!CITIES.some(c => c[0] === cityId)) cityId = chosenCities()[0];
+  const render = async () => {
+    const city = CITIES.find(c => c[0] === cityId);
+    const select = h("select", { "aria-label": t("pr.city"), class: "prayer-city" },
+      CITIES.map(c => h("option", { value: c[0], selected: c[0] === cityId }, cityName(c))));
+    select.addEventListener("change", () => {
+      cityId = select.value;
+      try { localStorage.setItem(PRAYER_KEY, cityId); } catch { /* this page view only */ }
+      render();
+    });
+    const head = h("div", { class: "extras-head" }, h("h2", {}, t("pr.title")), select);
+    box.replaceChildren(head, h("p", { class: "loading" }, t("loading")));
+    try {
+      const res = await fetch("https://api.aladhan.com/v1/timings?" + new URLSearchParams({ latitude: city[3], longitude: city[4] }));
+      const data = (await res.json())?.data;
+      if (!res.ok || !data?.timings) throw new Error();
+      const tz = data.meta?.timezone;
+      // Now, in the city's own time, to mark the next prayer.
+      const now = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: tz })
+        .format(new Date());
+      const clean = v => String(v).slice(0, 5);
+      const next = PRAYERS.filter(p => p !== "Sunrise").find(p => clean(data.timings[p]) > now) || "Fajr";
+      const hijri = data.date?.hijri;
+      box.replaceChildren(head,
+        hijri ? h("p", { class: "hijri" }, `${hijri.day} ${settings.lang === "ar" ? hijri.month.ar : hijri.month.en} ${hijri.year} ${t("pr.ah")}`) : null,
+        h("table", { class: "prayer-table" }, h("tbody", {}, PRAYERS.map(p => h("tr", { class: p === next ? "next" : "" },
+          h("th", { scope: "row" }, t(`pr.${p.toLowerCase()}`), p === next ? h("span", { class: "next-tag" }, t("pr.next")) : null),
+          h("td", {}, h("bdi", { dir: "ltr" }, clean(data.timings[p]))))))),
+        h("p", { class: "muted tiny source-line" }, t("pr.source", { method: data.meta?.method?.name || "—" }), " ",
+          externalLink("https://aladhan.com/", "Aladhan")));
+    } catch {
+      box.replaceChildren(head, h("p", { class: "muted small" }, t("pr.failed")));
+    }
+  };
+  render();
+  return box;
+}
+
+// Prayer times, exchange rates and earthquakes side by side, under the weather.
+export function todayRow() {
+  return h("div", { class: "today-row" }, prayerBox(), ratesBox(), quakesBox());
+}
