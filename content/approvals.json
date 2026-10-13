@@ -54,5 +54,13 @@
   "decision": "approve",
   "reviewer": "aladeen35",
   "at": "2026-10-13T17:56:50.946Z"
+ },
+ {
+  "metric_id": "ps_gaza_injured",
+  "period_end": "2026-09-30",
+  "value": 5026,
+  "decision": "approve",
+  "reviewer": "aladeen35",
+  "at": "2026-10-13T17:57:14.939Z"
  }
 ]
