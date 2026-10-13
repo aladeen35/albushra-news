@@ -53,5 +53,16 @@
   "feed_url": null,
   "added_by": "aladeen35",
   "added_at": "2026-10-13T00:25:14.552Z"
+ },
+ {
+  "url": "https://sudanile.com",
+  "name": "سودانايل",
+  "type": "wordpress",
+  "language": "ar",
+  "country": "SD",
+  "group": "sudan",
+  "feed_url": null,
+  "added_by": "aladeen35",
+  "added_at": "2026-10-13T00:25:54.009Z"
  }
 ]
