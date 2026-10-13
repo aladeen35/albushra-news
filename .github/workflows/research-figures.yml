@@ -36,7 +36,7 @@ jobs:
                   text = subprocess.run(["pdftotext", "-layout", "/tmp/x.pdf", "-"], capture_output=True, text=True).stdout
               else:
                   text = data.decode("utf-8", "replace")
-                  for m in re.finditer(r'href="([^"]*(?:snapshot|attachments|\\.pdf)[^"]*)"', text): print("LINK", m.group(1))
+                  for m in re.finditer(r'href="([^"]*(?:snapshot|attachments|\.pdf)[^"]*)"', text): print("LINK", m.group(1))
                   text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", text, flags=re.S)
                   text = html.unescape(re.sub(r"<[^>]+>", " ", text))
               m = re.search(r"(Published|Issued|Date)[^\n]{0,80}", text)
