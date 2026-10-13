@@ -307,3 +307,27 @@ def test_rss_image_from_media_tag_or_item_html():
     </channel></rss>"""
     items = RssAdapter(client(lambda r: httpx.Response(200, content=rss))).fetch("https://p.org/rss", "P").items
     assert [i.image_url for i in items] == ["https://p.org/a.jpg", "https://p.org/b.jpg?w=1&h=2", None]
+
+
+def test_page_meta_from_open_graph_and_json_ld():
+    from app.providers.pagemeta import fetch_page_meta, parse_page
+    html = """<html lang="ar"><head><title>عنوان الصفحة | الموقع</title>
+      <meta property="og:title" content="وزير الخارجية يلتقي نظيره">
+      <meta property="og:description" content="ملخص الخبر &amp; تفاصيله.">
+      <meta property="og:image" content="/img/a.jpg">
+      <meta property="og:site_name" content="صحيفة الاختبار">
+      <script type="application/ld+json">{"@graph":[{"@type":"NewsArticle",
+        "datePublished":"2026-10-12T09:30:00+03:00","author":{"name":"سارة"}}]}</script>
+      </head><body></body></html>"""
+    d = parse_page(html, "https://news.example.sa/story/1")
+    assert d["title"] == "وزير الخارجية يلتقي نظيره" and d["description"] == "ملخص الخبر & تفاصيله."
+    assert d["image_url"] == "https://news.example.sa/img/a.jpg" and d["publisher_name"] == "صحيفة الاختبار"
+    assert d["published_at"].startswith("2026-10-12T06:30") and d["language"] == "ar" and d["author"] == "سارة"
+    bare = parse_page("<title> Plain page </title>", "https://x.org/p")
+    assert bare["title"] == "Plain page" and bare["image_url"] is None and bare["published_at"] is None
+    page = client(lambda r: httpx.Response(200, html=html))
+    assert fetch_page_meta("https://news.example.sa/story/1", page, check_host=False)["title"] == d["title"]
+    with pytest.raises(ProviderError):
+        fetch_page_meta("ftp://x.org/a", page, check_host=False)
+    with pytest.raises(ProviderError):
+        fetch_page_meta("https://127.0.0.1/admin", page)  # never a proxy into private networks

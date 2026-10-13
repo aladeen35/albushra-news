@@ -5,6 +5,7 @@ import { h, t, L, api, isStatic, fmtDate, fmtDateTime, fmtNumber, fmtPeriod, ext
 import { META, errorState, loading, typeBadge, countryName } from "./components.js";
 import { icon } from "./icons.js";
 import { ghAdminView } from "./ghadmin.js";
+import { previewTools } from "./preview.js";
 
 function token() { try { return sessionStorage.getItem("obs.admin") || ""; } catch { return ""; } }
 function setToken(v) { try { sessionStorage.setItem("obs.admin", v); } catch { /* ignore */ } }
@@ -355,8 +356,8 @@ async function addnews(body, rerender) {
   const form = h("form", { class: "card form" },
     h("h2", {}, t("admin.news.title")),
     h("p", { class: "muted small" }, t("admin.news.note")),
-    field(t("admin.news.headline"), h("input", { name: "title", required: true, minlength: 5, maxlength: 400, dir: "auto" })),
     field(t("admin.news.link"), h("input", { name: "url", type: "url", required: true, dir: "ltr", placeholder: "https://" })),
+    field(t("admin.news.headline"), h("input", { name: "title", required: true, minlength: 5, maxlength: 400, dir: "auto" })),
     field(t("admin.news.summary"), h("textarea", { name: "description", rows: 3, maxlength: 1000, dir: "auto" })),
     h("div", { class: "row" },
       field(t("article.publisher"), h("input", { name: "publisher_name", required: true, minlength: 2 })),
@@ -370,6 +371,7 @@ async function addnews(body, rerender) {
     field(t("admin.news.image"), h("input", { name: "image_url", type: "url", dir: "ltr", placeholder: "https://" })),
     field(t("admin.entered_by"), h("input", { name: "entered_by", required: true, minlength: 2 })),
     h("button", { class: "btn", type: "submit" }, t("admin.news.publish")), out);
+  previewTools(form, { serverCall: url => call("/articles/preview", { method: "POST", body: { url } }) });
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const fd = new FormData(form);

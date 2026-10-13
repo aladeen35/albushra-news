@@ -5,6 +5,7 @@
 import { h, t, L, every, fmtDate, fmtDateTime, fmtNumber, fmtPeriod, externalLink } from "./core.js";
 import { META, countryName, typeBadge, loading, errorState } from "./components.js";
 import { icon } from "./icons.js";
+import { previewTools } from "./preview.js";
 
 const API = "https://api.github.com";
 const KEY = "obs.gh";
@@ -198,8 +199,8 @@ async function addnews(body, rerender) {
     h("label", { class: "radio" }, h("input", { type: "checkbox", name: "topics", value: x }), t(`topic.${x}`))));
   const form = h("form", { class: "card form" }, h("h2", {}, t("admin.news.title")),
     h("p", { class: "muted small" }, t("admin.news.note")),
-    field(t("admin.news.headline"), h("input", { name: "title", required: true, minlength: 5, maxlength: 400, dir: "auto" })),
     field(t("admin.news.link"), h("input", { name: "url", type: "url", required: true, dir: "ltr", placeholder: "https://" })),
+    field(t("admin.news.headline"), h("input", { name: "title", required: true, minlength: 5, maxlength: 400, dir: "auto" })),
     field(t("admin.news.summary"), h("textarea", { name: "description", rows: 3, maxlength: 1000, dir: "auto" })),
     h("div", { class: "row" },
       field(t("article.publisher"), h("input", { name: "publisher_name", required: true, minlength: 2 })),
@@ -210,7 +211,9 @@ async function addnews(body, rerender) {
       field(t("filter.ctype"), h("select", { name: "content_type" }, META.content_types.map(c => h("option", { value: c }, t(`ctype.${c}`)))))),
     field(t("admin.news.countries"), h("input", { name: "event_countries", dir: "ltr", placeholder: "SD, SA" })),
     h("fieldset", {}, h("legend", {}, t("filter.topic")), topics),
+    field(t("admin.news.image"), h("input", { name: "image_url", type: "url", dir: "ltr", placeholder: "https://" })),
     h("button", { class: "btn", type: "submit" }, t("admin.news.publish")), out);
+  previewTools(form);
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const fd = new FormData(form);
@@ -218,11 +221,12 @@ async function addnews(body, rerender) {
       publisher_name: fd.get("publisher_name").trim(), publisher_country: fd.get("publisher_country") || null,
       language: fd.get("language"), published_at: new Date(fd.get("published_at")).toISOString(),
       content_type: fd.get("content_type"), topics: fd.getAll("topics"),
+      image_url: (fd.get("image_url") || "").startsWith("https://") ? fd.get("image_url") : null,
       event_countries: (fd.get("event_countries") || "").split(/[\s,،]+/).filter(Boolean).map(c => c.toUpperCase()),
       entered_by: editor, added_at: new Date().toISOString() };
     try {
       await update("articles.json", [], list => [...list.filter(a => a.url !== story.url), story], `خبر: ${story.title.slice(0, 60)}`);
-      savedNote(out); form.reset(); renderList();
+      savedNote(out); form.reset(); form.querySelector(".preview-img")?.setAttribute("hidden", ""); renderList();
     } catch (err) { msg(out, err.message, false); }
   });
   const hideOut = h("div");

@@ -438,5 +438,13 @@
  "gh.settings.every": "every",
  "gh.settings.fetch_note": "The new interval takes effect within minutes of saving. Each build takes 6 to 8 minutes, and GitHub can run a few minutes late at busy times.",
  "section.saudi": "Saudi Arabia",
- "section.saudi.note": "News and reports about Saudi Arabia from every source, plus Saudi publishers' local stories such as SPA's."
+ "section.saudi.note": "News and reports about Saudi Arabia from every source, plus Saudi publishers' local stories such as SPA's.",
+ "preview.fetch": "Fetch details",
+ "preview.need_link": "Paste the story's link first; it starts with https://",
+ "preview.working": "Reading the story's page…",
+ "preview.done": "Details fetched. Check the headline, summary, picture and date, then save.",
+ "preview.partial": "Only some details were found. Fill in the empty fields, then save.",
+ "preview.failed": "Could not read this page; enter the details by hand.",
+ "preview.note.server": "The server reads the story's page and fills the fields for you to review.",
+ "preview.note.static": "The page is read through the free Microlink service and the fields are filled for you to review."
 }

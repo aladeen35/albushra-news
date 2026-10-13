@@ -545,3 +545,9 @@ def test_images_shown_by_default_and_hidden_by_the_source_switch(client, session
     src.allow_images = False
     session.commit()
     assert client.get("/api/articles?q=photo").json()["items"][0]["image_url"] is None
+
+
+def test_preview_endpoint_needs_admin_and_reports_unreadable_pages(client):
+    assert client.post("/api/admin/articles/preview", json={"url": "https://example.com/a"}).status_code == 401
+    r = client.post("/api/admin/articles/preview", headers=ADMIN, json={"url": "https://127.0.0.1/a"})
+    assert r.status_code == 422 and "could not read" in r.json()["detail"]

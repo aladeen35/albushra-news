@@ -499,6 +499,23 @@ def correct_classification(article_id: int, body: ClassificationIn,
             "published_at": iso(as_utc(a.published_at))}
 
 
+# --- filling the add-story form from the story's own page ----------------------
+
+class PreviewIn(BaseModel):
+    url: str = Field(..., min_length=10, max_length=1000)
+
+
+@router.post("/articles/preview")
+def preview_article(body: PreviewIn):
+    """Title, summary, picture and date from the page, for the editor to review."""
+    from ..providers.base import ProviderError
+    from ..providers.pagemeta import fetch_page_meta
+    try:
+        return fetch_page_meta(body.url.strip())
+    except ProviderError as exc:
+        raise HTTPException(422, f"could not read the page: {exc}") from None
+
+
 # --- adding a site by its address (WordPress or any site with a feed) -------
 
 class SiteIn(BaseModel):
