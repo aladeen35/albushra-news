@@ -10,7 +10,7 @@ wording changes, nothing is stored and the monitoring tab shows why.
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from .base import FetchResult, HttpClient, MetricReading, ProviderError
 
@@ -74,12 +74,24 @@ class OchaSitrepAdapter:
                 d = _report_date(*m.groups())
                 if d:
                     found[BASE + m.group(0)] = d
-            if found:
-                break
         if not found:
             raise ProviderError("no situation report found on OCHA oPt's site"
                                 + (f" ({'; '.join(errors)})" if errors else ""))
+        # Listing pages lag behind: try the addresses newer reports would have.
+        newest = max(found.values())
+        day = newest
+        while (day := day + timedelta(days=1)) <= self.today():
+            url = f"{BASE}/content/humanitarian-situation-report-{day.day}-{day.strftime('%B').lower()}-{day.year}"
+            try:
+                self.http.request("HEAD", url)
+            except ProviderError:
+                continue
+            found[url] = day
         return sorted(((d, u) for u, d in found.items()), reverse=True)
+
+    @staticmethod
+    def today() -> date:
+        return date.today()
 
     def latest(self, config: dict) -> FetchResult:
         measure = config.get("measure", "fatalities")

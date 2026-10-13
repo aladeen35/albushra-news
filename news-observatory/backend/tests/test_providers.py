@@ -353,6 +353,7 @@ def test_ocha_weekly_report_totals():
             return httpx.Response(200, html=OCHA_REPORT)
         return httpx.Response(200, html=OCHA_LIST)
     adapter = ocha.OchaSitrepAdapter(client(handler))
+    adapter.today = lambda: date(2026, 10, 2)
     killed = adapter.latest({"measure": "fatalities"}).items[0]
     injured = adapter.latest({"measure": "injuries"}).items[0]
     assert (killed.value, injured.value) == (1431, 5026)
@@ -364,3 +365,20 @@ def test_ocha_weekly_report_totals():
     ocha.reset_cache()
     with pytest.raises(ProviderError):
         ocha.OchaSitrepAdapter(client(lambda r: httpx.Response(200, html="<p>nothing</p>"))).latest({})
+
+
+def test_ocha_finds_a_report_the_listing_does_not_show_yet():
+    from app.providers import ocha
+    ocha.reset_cache()
+
+    def handler(request):
+        url = str(request.url)
+        if url.endswith("2-october-2026"):
+            return httpx.Response(200, html=OCHA_REPORT)
+        if "humanitarian-situation-report-" in url:
+            return httpx.Response(404)
+        return httpx.Response(200, html='<a href="/content/humanitarian-situation-report-25-september-2026">x</a>')
+    adapter = ocha.OchaSitrepAdapter(client(handler))
+    adapter.today = lambda: date(2026, 10, 3)
+    reading = adapter.latest({"measure": "fatalities"}).items[0]
+    assert reading.value == 1431 and reading.source_url.endswith("2-october-2026")
