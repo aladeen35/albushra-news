@@ -3,8 +3,9 @@ plugins {
 }
 
 // The server the app opens. Set at build time (-PserverUrl=https://...), and
-// changeable later from inside the app; empty means "ask on first launch".
-def serverUrl = (project.findProperty('serverUrl') ?: '').toString().trim()
+// changeable later from inside the app. Defaults to the site on GitHub Pages;
+// an empty value means "ask on first launch".
+def serverUrl = (project.findProperty('serverUrl') ?: 'https://aladeen35.github.io/albushra-news/').toString().trim()
 def versionNameProp = (project.findProperty('appVersionName') ?: '1.0.0').toString()
 def versionCodeProp = (project.findProperty('appVersionCode') ?: '1').toString().toInteger()
 
