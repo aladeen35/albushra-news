@@ -32,6 +32,14 @@ function parse() {
   return { parts: path.split("/").filter(Boolean), params: new URLSearchParams(query) };
 }
 
+// "Tuesday, 13 October 2026" in the reader's language and time zone.
+function todayLine() {
+  try {
+    return new Intl.DateTimeFormat(settings.lang === "ar" ? "ar-u-ca-gregory-nu-latn" : "en-GB", { weekday: "long", day: "numeric",
+      month: "long", year: "numeric", timeZone: settings.timeZone }).format(new Date());
+  } catch { return ""; }
+}
+
 function shell() {
   const route = location.hash.split("?")[0] || "#/";
   const langBtn = h("button", { class: "btn ghost lang-switch", type: "button",
@@ -42,6 +50,12 @@ function shell() {
     saveSettings({ lang: next });
     render();
   });
+  // Newspaper look (the default) or the earlier modern look.
+  const paper = settings.style !== "modern";
+  const styleBtn = h("button", { class: "btn ghost style-switch", type: "button",
+    title: t(paper ? "style.to_modern" : "style.to_paper"), "aria-label": t(paper ? "style.to_modern" : "style.to_paper") },
+    icon(paper ? "home" : "news", 17), h("span", {}, t(paper ? "style.modern" : "style.paper")));
+  styleBtn.addEventListener("click", () => { saveSettings({ style: paper ? "modern" : "paper" }); render(); });
   const search = h("form", { class: "header-search", role: "search" },
     h("input", { type: "search", name: "q", "aria-label": t("search.label"), placeholder: t("search.placeholder"),
       minlength: 2, maxlength: 200 }));
@@ -60,7 +74,10 @@ function shell() {
         h("a", { href: "#/sources", title: t("nav.sources"), class: "tool" }, icon("sources", 20), h("span", {}, t("nav.sources"))),
         h("a", { href: "#/saved", title: t("nav.saved"), class: "tool" }, icon("saved", 20), h("span", {}, t("nav.saved"))),
         h("a", { href: "#/settings", title: t("nav.settings"), class: "tool" }, icon("settings", 20), h("span", {}, t("nav.settings"))),
-        langBtn))),
+        styleBtn, langBtn)),
+      // The newspaper's date line under the masthead (shown in the paper style only).
+      h("div", { class: "dateline" }, h("span", {}, todayLine()),
+        h("span", { class: "dateline-motto" }, t("app.motto")), h("span", {}, t("app.edition")))),
     h("nav", { class: "sections", "aria-label": t("nav.sections") }, h("div", { class: "sections-inner" },
       NAV.map(([href, key, ic, code]) => h("a", { href, "aria-current": route === href ? "page" : null },
         navMark(ic, code), h("span", {}, t(key)))))),

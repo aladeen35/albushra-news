@@ -346,6 +346,8 @@ export function settingsView(rerender) {
     h("fieldset", {}, h("legend", {}, t("settings.font")),
       radio("fontSize", "s", t("settings.font.s")), radio("fontSize", "m", t("settings.font.m")),
       radio("fontSize", "l", t("settings.font.l"))),
+    h("fieldset", {}, h("legend", {}, t("settings.style")),
+      radio("style", "paper", t("style.paper")), radio("style", "modern", t("style.modern"))),
     h("fieldset", {}, h("legend", {}, t("settings.theme")),
       radio("theme", "auto", t("settings.theme.auto")), radio("theme", "dark", t("settings.theme.dark")),
       radio("theme", "light", t("settings.theme.light"))),

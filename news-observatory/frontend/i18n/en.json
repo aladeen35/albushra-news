@@ -446,5 +446,12 @@
  "preview.partial": "Only some details were found. Fill in the empty fields, then save.",
  "preview.failed": "Could not read this page; enter the details by hand.",
  "preview.note.server": "The server reads the story's page and fills the fields for you to review.",
- "preview.note.static": "The page is read through the free Microlink service and the fields are filled for you to review."
+ "preview.note.static": "The page is read through the free Microlink service and the fields are filled for you to review.",
+ "settings.style": "Site style",
+ "style.paper": "Print edition",
+ "style.modern": "Modern look",
+ "style.to_modern": "Switch to the modern look",
+ "style.to_paper": "Switch to the print edition",
+ "app.motto": "From the event to the truth",
+ "app.edition": "News platform · Digital edition"
 }

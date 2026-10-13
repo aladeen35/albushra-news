@@ -37,7 +37,7 @@ export function externalLink(url, ...children) {
 }
 
 // --- settings (per-viewer conveniences; the page works without storage) ---
-const DEFAULTS = { lang: null, timeZone: null, fontSize: "m", theme: "light" };
+const DEFAULTS = { lang: null, timeZone: null, fontSize: "m", theme: "light", style: "paper" };
 
 function readStore(key, fallback) {
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
@@ -65,6 +65,7 @@ export function applySettings() {
   root.lang = settings.lang;
   root.dir = settings.lang === "ar" ? "rtl" : "ltr";
   root.dataset.font = settings.fontSize;
+  root.dataset.style = settings.style === "modern" ? "modern" : "paper";
   if (settings.theme === "auto") delete root.dataset.theme; else root.dataset.theme = settings.theme;
 }
 

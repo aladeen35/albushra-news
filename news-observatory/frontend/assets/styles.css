@@ -446,3 +446,9 @@ footer a:hover { color: #fff; text-decoration: underline; }
 .preview-img { display: block; max-width: 320px; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px;
   border: 1px solid var(--border); margin-block: 4px 8px; }
 .preview-img[hidden] { display: none; }
+
+/* The style switch and the newspaper date line; the print edition itself is in paper.css. */
+.dateline { display: none; }
+.style-switch { color: var(--brand-ink) !important; border-color: rgba(255, 255, 255, .5) !important; }
+.style-switch:hover { background: rgba(255, 255, 255, .15) !important; }
+@media (max-width: 860px) { .style-switch span { display: none; } }
