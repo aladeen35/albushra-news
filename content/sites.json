@@ -31,5 +31,16 @@
   "feed_url": null,
   "added_by": "aladeen35",
   "added_at": "2026-10-13T00:23:35.440Z"
+ },
+ {
+  "url": "https://alsudantoday.com",
+  "name": "السودان اليوم",
+  "type": "wordpress",
+  "language": "ar",
+  "country": "SD",
+  "group": "sudan",
+  "feed_url": null,
+  "added_by": "aladeen35",
+  "added_at": "2026-10-13T00:24:37.893Z"
  }
 ]
