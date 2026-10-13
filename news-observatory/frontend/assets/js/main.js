@@ -16,9 +16,9 @@ const NAV = [
 ];
 // The phone tab bar, as in the reference design.
 const TABS = [
-  ["#/", "nav.home", "home", null], ["#/section/saudi", "section.saudi", null, "SA"],
+  ["#/", "nav.home", "home", null], ["#/foryou", "nav.foryou", "foryou", null],
   ["#/section/sudan", "section.sudan", null, "SD"], ["#/section/sports", "section.sports", "sports", null],
-  ["#/foryou", "nav.foryou", "foryou", null], ["#/saved", "nav.saved", "saved", null],
+  ["#/saved", "nav.saved", "saved", null],
 ];
 
 function navMark(iconName, code) {
