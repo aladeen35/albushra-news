@@ -20,5 +20,16 @@
   "feed_url": null,
   "added_by": "aladeen35",
   "added_at": "2026-10-12T23:24:35.805Z"
+ },
+ {
+  "url": "https://sudantribune.net",
+  "name": "سودان تربيون",
+  "type": "wordpress",
+  "language": "ar",
+  "country": "SD",
+  "group": "sudan",
+  "feed_url": null,
+  "added_by": "aladeen35",
+  "added_at": "2026-10-13T00:23:35.440Z"
  }
 ]
