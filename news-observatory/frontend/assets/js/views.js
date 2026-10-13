@@ -2,6 +2,7 @@
 import { icon } from "./icons.js";
 import { translateButton, translatedPageUrl, targetLanguage } from "./translate.js";
 import { shareCardButton, storyLink } from "./sharecard.js";
+import { weatherStrip, ratesBox, quakesBox } from "./extras.js";
 import { h, t, every, L, settings, saveSettings, saved, prefs, api, qs, fmtDate, fmtDateTime, fmtNumber,
   fmtPeriod, externalLink, langName } from "./core.js";
 import { META, metricCard, articleList, emptyState, errorState, loading, trendChart, typeBadge,
@@ -106,13 +107,15 @@ export function homeView(params) {
     h("a", { class: "quick-link", href: "#/section/sports" }, icon("sports", 24), t("section.sports")),
     h("a", { class: "quick-link", href: "#/foryou" }, icon("foryou", 24), t("nav.foryou")));
 
-  return h("div", { class: "home" }, ticker, header,
+  return h("div", { class: "home" }, ticker, weatherStrip(), header,
     h("section", { class: "block numbers" }, h("h2", {}, t("home.numbers")), cards),
     h("p", { class: "small muted how-link" }, h("a", { href: "#/how" }, t("how.link"))),
     h("div", { class: "columns" },
       h("div", {}, section("home.top", topNews), section("home.quick", quick)),
       h("div", {},
+        ratesBox(),
         section("home.trends", trends),
+        quakesBox(),
         h("section", { class: "block humanitarian" }, h("h2", {}, t("home.humanitarian")),
           h("p", { class: "muted small" }, t("home.humanitarian.note")), humanitarian))));
 }

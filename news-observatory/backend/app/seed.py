@@ -352,6 +352,50 @@ TRUSTED_FEEDS = [
     _feed_source("yallakora", "يلا كورة", "https://www.yallakora.com", "EG", 0.65, [
         {"url": "https://www.yallakora.com/rss", "language": "ar", "site": "https://www.yallakora.com",
          "topic": "sports"}], group="sports"),
+    # Added after a check from GitHub's servers (October 2026): each feed below
+    # answered with current stories. Sites that refused the reader or served
+    # broken XML (Okaz, Al-Riyadh, Sabq, Youm7, Al-Ahram, Al-Watan, WAFA, Ma'an)
+    # are left out until their feeds work.
+    _feed_source("cnn_ar", "CNN بالعربية", "https://arabic.cnn.com", "US", 0.75, [
+        {"url": "https://arabic.cnn.com/api/v1/rss/rss.xml", "language": "ar"}], group="arab"),
+    _feed_source("independent_ar", "إندبندنت عربية", "https://www.independentarabia.com", "GB", 0.75, [
+        {"url": "https://www.independentarabia.com/rss.xml", "language": "ar"}], group="arab"),
+    _feed_source("alaraby", "العربي الجديد", "https://www.alaraby.co.uk", "GB", 0.7, [
+        {"url": "https://www.alaraby.co.uk/rss", "language": "ar"}], group="arab"),
+    _feed_source("alquds_alarabi", "القدس العربي", "https://www.alquds.co.uk", "GB", 0.7, [
+        {"url": "https://www.alquds.co.uk/feed/", "language": "ar"}], group="arab"),
+    _feed_source("euronews_ar", "يورونيوز عربي", "https://arabic.euronews.com", "FR", 0.75, [
+        {"url": "https://arabic.euronews.com/rss", "language": "ar"}], group="arab"),
+    _feed_source("alhurra", "الحرة", "https://www.alhurra.com", "US", 0.65, [
+        {"url": "https://www.alhurra.com/rss", "language": "ar"}], group="arab"),
+    _feed_source("rt_ar", "RT عربي", "https://arabic.rt.com", "RU", 0.55, [
+        {"url": "https://arabic.rt.com/rss/", "language": "ar"}], group="arab"),
+    _feed_source("altaghyeer", "صحيفة التغيير", "https://www.altaghyeer.info", "SD", 0.7, [
+        {"url": "https://www.altaghyeer.info/ar/feed/", "language": "ar"}], group="sudan"),
+    _feed_source("darfur24", "دارفور 24", "https://www.darfur24.com", "SD", 0.7, [
+        {"url": "https://www.darfur24.com/feed/", "language": "ar"}], group="sudan"),
+    _feed_source("ultrasudan", "الترا سودان", "https://ultrasudan.ultrasawt.com", "SD", 0.7, [
+        {"url": "https://ultrasudan.ultrasawt.com/rss.xml", "language": "ar"}], group="sudan"),
+    _feed_source("bajnews", "باج نيوز", "https://www.bajnews.net", "SD", 0.65, [
+        {"url": "https://www.bajnews.net/feed/", "language": "ar"}], group="sudan"),
+    _feed_source("mee", "Middle East Eye", "https://www.middleeasteye.net", "GB", 0.7, [
+        {"url": "https://www.middleeasteye.net/rss", "language": "en"}]),
+    _feed_source("thenational", "The National", "https://www.thenationalnews.com", "AE", 0.75, [
+        {"url": "https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml", "language": "en"}]),
+    _feed_source("nyt", "The New York Times", "https://www.nytimes.com", "US", 0.85, [
+        {"url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "language": "en"},
+        {"url": "https://rss.nytimes.com/services/xml/rss/nyt/MiddleEast.xml", "language": "en"}]),
+    _feed_source("npr", "NPR", "https://www.npr.org", "US", 0.8, [
+        {"url": "https://feeds.npr.org/1004/rss.xml", "language": "en"}]),
+    _feed_source("skynews_en", "Sky News", "https://news.sky.com", "GB", 0.75, [
+        {"url": "https://feeds.skynews.com/feeds/rss/world.xml", "language": "en"}]),
+    _feed_source("cbs", "CBS News", "https://www.cbsnews.com", "US", 0.75, [
+        {"url": "https://www.cbsnews.com/latest/rss/world", "language": "en"}]),
+    _feed_source("abc_au", "ABC News (Australia)", "https://www.abc.net.au/news", "AU", 0.8, [
+        {"url": "https://www.abc.net.au/news/feed/51120/rss.xml", "language": "en"}]),
+    _feed_source("kooora", "كووورة", "https://www.kooora.com", "QA", 0.65, [
+        {"url": "https://feeds.footballco.com/kooora/feed/6p5bsxot7te8yick", "language": "ar", "topic": "sports"}],
+        group="sports"),
 ]
 
 # When a publisher's feed cannot be read (missing, or refusing feed readers),

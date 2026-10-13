@@ -254,3 +254,16 @@
 @media (prefers-reduced-motion: reduce) {
   :root[data-style="paper"] .brand-text strong, :root[data-style="paper"] .bar { transition: none; }
 }
+
+/* Today's conditions in the print edition */
+:root[data-style="paper"] .wx-card { background: transparent; border: 0; border-inline-start: 1px solid var(--rule); border-radius: 0; }
+:root[data-style="paper"] .wx-card:first-child { border-inline-start: 0; }
+:root[data-style="paper"] .wx-row { border-block: 1.5px solid var(--ink); padding-block: 6px; }
+:root[data-style="paper"] .wx-now { color: var(--ink); }
+:root[data-style="paper"] .wx-temp { font-family: var(--head); font-weight: 400; font-size: 2.2rem; }
+:root[data-style="paper"] .wx-city { font-family: var(--head); font-weight: 400; font-size: 1.15rem; }
+:root[data-style="paper"] .weather .extras-head h2 { border: 0; margin: 0; }
+:root[data-style="paper"] .rates, :root[data-style="paper"] .quakes { border: 1px solid var(--ink); padding: 12px 16px; background: var(--surface); }
+:root[data-style="paper"] .rates > h2, :root[data-style="paper"] .quakes > h2 { font-size: 1.35rem; }
+:root[data-style="paper"] .mag { border-radius: 0; }
+:root[data-style="paper"] .rates-table th { background: none; }
