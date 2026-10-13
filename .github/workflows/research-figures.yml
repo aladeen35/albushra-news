@@ -18,14 +18,10 @@ jobs:
         run: |
           import re, subprocess, urllib.request, html
           URLS = [
-            "https://www.ochaopt.org/content/humanitarian-situation-report-2-october-2026",
-            "https://www.ochaopt.org/content/humanitarian-situation-report-25-september-2026",
-            "https://www.ochaopt.org/publications/snapshots",
-            "https://www.ochaopt.org/data/casualties",
-            "https://dtm.iom.int/reports/dtm-sudan-displacement-and-return-snapshot-9",
-            "https://dtm.iom.int/sudan",
-            "https://www.un.org/unispal/wp-content/uploads/2025/12/OPT_Flash_Appeal_2026_At_a_Glance_EN.pdf",
-            "https://www.unrwa.org/resources/reports/unrwa-situation-report-230-humanitarian-crisis-gaza-strip-and-occupied-west-bank",
+            "https://www.ochaopt.org/content/reported-impact-snapshot-gaza-strip-30-september-2026",
+            "https://www.ochaopt.org/content/west-bank-monthly-snapshot-casualties-property-damage-and-displacement-august-2026",
+            "https://reliefweb.int/updates?search=%22Displacement%20and%20Return%20Snapshot%22%20Sudan",
+            "https://reliefweb.int/country/sdn",
           ]
           KEY = re.compile(r"(killed|fatalit|injur|displaced|returnee|returned|people in need|in need of)", re.I)
           for url in URLS:
@@ -40,7 +36,7 @@ jobs:
                   text = subprocess.run(["pdftotext", "-layout", "/tmp/x.pdf", "-"], capture_output=True, text=True).stdout
               else:
                   text = data.decode("utf-8", "replace")
-                  for m in re.finditer(r'href="([^"]*snapshot[^"]*)"', text): print("LINK", m.group(1))
+                  for m in re.finditer(r'href="([^"]*(?:snapshot|attachments|\\.pdf)[^"]*)"', text): print("LINK", m.group(1))
                   text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", text, flags=re.S)
                   text = html.unescape(re.sub(r"<[^>]+>", " ", text))
               m = re.search(r"(Published|Issued|Date)[^\n]{0,80}", text)
@@ -50,4 +46,4 @@ jobs:
                   s = " ".join(s.split())
                   if KEY.search(s) and re.search(r"\d", s) and 20 < len(s) < 600:
                       print("-", s); seen += 1
-                      if seen >= 40: break
+                      if seen >= 60: break
