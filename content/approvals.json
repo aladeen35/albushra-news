@@ -62,5 +62,13 @@
   "decision": "approve",
   "reviewer": "aladeen35",
   "at": "2026-10-13T17:57:14.939Z"
+ },
+ {
+  "metric_id": "ps_people_in_need",
+  "period_end": "2026-12-31",
+  "value": 3000000,
+  "decision": "approve",
+  "reviewer": "aladeen35",
+  "at": "2026-10-13T17:57:16.713Z"
  }
 ]
