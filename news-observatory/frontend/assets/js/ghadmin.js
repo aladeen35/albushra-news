@@ -394,5 +394,66 @@ async function settingsTab(body) {
       savedNote(out);
     } catch (err) { msg(out, err.message, false); }
   });
-  body.replaceChildren(form);
+  body.replaceChildren(form, await telegramForm());
+}
+
+// Telegram channels: which channel gets what, saved to content/channels.json.
+// The bot's token is not here: it is a repository secret, set on GitHub.
+const TG_DEFAULT = {
+  channels: [
+    { key: "main", name: "الشاملة", chat: "", filter: "top", limit: 5 },
+    { key: "sudan", name: "السودان", chat: "", filter: "sudan", limit: 15 },
+    { key: "palestine", name: "فلسطين", chat: "", filter: "palestine", limit: 15 },
+    { key: "saudi", name: "السعودية", chat: "", filter: "saudi", limit: 15 },
+    { key: "sports", name: "الرياضة", chat: "", filter: "sports", limit: 5 },
+  ],
+  numbers: { chat: "", hour: 6, tz: "Asia/Riyadh" },
+};
+
+async function telegramForm() {
+  const { data } = await readContent("channels.json", TG_DEFAULT);
+  const cfg = { ...TG_DEFAULT, ...data, numbers: { ...TG_DEFAULT.numbers, ...(data.numbers || {}) } };
+  const out = h("div");
+  const rows = cfg.channels.map(ch => {
+    const chat = h("input", { value: ch.chat || "", dir: "ltr", placeholder: "@albushra_news" });
+    const limit = h("input", { type: "number", min: 1, max: 20, value: ch.limit ?? 5, dir: "ltr" });
+    return { ch, chat, limit, row: h("div", { class: "row" }, field(t("gh.tg.channel", { name: ch.name }), chat),
+      field(t("gh.tg.limit"), limit)) };
+  });
+  const numChat = h("input", { value: cfg.numbers.chat || "", dir: "ltr", placeholder: "@albushra_numbers" });
+  const numHour = h("input", { type: "number", min: 0, max: 23, value: cfg.numbers.hour ?? 6, dir: "ltr" });
+  const secretUrl = `https://github.com/${repo()}/settings/secrets/actions/new`;
+  const form = h("form", { class: "card form" },
+    h("h2", {}, t("gh.tg.title")),
+    h("p", { class: "muted small" }, t("gh.tg.note")),
+    h("ol", { class: "small" },
+      h("li", {}, t("gh.tg.step1")), h("li", {}, t("gh.tg.step2")),
+      h("li", {}, t("gh.tg.step3"), " ", externalLink(secretUrl, t("gh.tg.secret_link"))),
+      h("li", {}, t("gh.tg.step4"))),
+    ...rows.map(r => r.row),
+    h("div", { class: "row" }, field(t("gh.tg.numbers"), numChat), field(t("gh.tg.hour"), numHour)),
+    h("div", { class: "actions" }, h("button", { class: "btn", type: "submit" }, t("admin.save")),
+      h("button", { class: "btn ghost", type: "button", onclick: test }, t("gh.tg.test"))), out);
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const next = {
+      ...cfg,
+      channels: rows.map(r => ({ ...r.ch, chat: r.chat.value.trim(), limit: Math.max(1, Math.min(20, Number(r.limit.value) || 5)) })),
+      numbers: { ...cfg.numbers, chat: numChat.value.trim(), hour: Math.max(0, Math.min(23, Number(numHour.value) || 6)) },
+    };
+    try {
+      await update("channels.json", TG_DEFAULT, () => next, "قنوات تلجرام");
+      savedNote(out);
+    } catch (err) { msg(out, err.message, false); }
+  });
+  async function test() {
+    try {
+      await gh(`/repos/${repo()}/actions/workflows/${META.static.workflow || "pages.yml"}/dispatches`,
+        { method: "POST", body: { ref: "main", inputs: { telegram_test: "true" } } });
+      msg(out, t("gh.tg.test_started"), true, externalLink(`https://github.com/${repo()}/actions`, t("gh.watch_build")));
+    } catch (err) {
+      msg(out, err.status === 403 ? t("gh.rebuild.no_permission") : err.message, false);
+    }
+  }
+  return form;
 }

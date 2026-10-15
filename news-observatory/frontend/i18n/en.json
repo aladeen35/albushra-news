@@ -511,5 +511,18 @@
  "pr.next": "next",
  "pr.ah": "AH",
  "pr.failed": "Prayer times are unavailable right now.",
- "pr.source": "In the city's local time; method: {method}. Data from"
+ "pr.source": "In the city's local time; method: {method}. Data from",
+ "gh.tg.title": "Telegram channels",
+ "gh.tg.note": "New stories are sent automatically after each site update: headline, summary, source and a link to the story in Al-Bushra. Leave a channel empty to switch it off.",
+ "gh.tg.step1": "Create a bot with @BotFather in Telegram (/newbot) and copy its token.",
+ "gh.tg.step2": "Add the bot as an admin of each channel, allowed to post.",
+ "gh.tg.step3": "Save the token as a repository secret named TELEGRAM_BOT_TOKEN:",
+ "gh.tg.secret_link": "add the secret",
+ "gh.tg.step4": "Enter the channel names here, save, then press “Test message”.",
+ "gh.tg.channel": "{name} channel",
+ "gh.tg.limit": "Most per update",
+ "gh.tg.numbers": "World-in-numbers channel (daily post)",
+ "gh.tg.hour": "Hour to send (Makkah time)",
+ "gh.tg.test": "Test message",
+ "gh.tg.test_started": "Update started with one test message per channel; it arrives within minutes."
 }

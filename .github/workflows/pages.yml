@@ -11,6 +11,11 @@ on:
   push:
     branches: [main]   # includes every save from the admin page (content/)
   workflow_dispatch:
+    inputs:
+      telegram_test:
+        description: 'إرسال رسالة تجريبية واحدة لكل قناة تلجرام فقط'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -76,6 +81,17 @@ jobs:
           CONTENT_PATH: content
           PAGES_WORKFLOW: pages.yml
         run: python scripts/build_pages.py ../../site
+
+      # New stories and the daily numbers to the Telegram channels set in
+      # content/channels.json. Skipped quietly without the bot token; never
+      # stops the site from being published.
+      - name: النشر في قنوات تلجرام
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_TEST: ${{ github.event.inputs.telegram_test || 'false' }}
+          CONTENT_DIR: ../../content
+        run: python scripts/publish_telegram.py ../../site
 
       - name: النشر على فرع gh-pages
         uses: peaceiris/actions-gh-pages@v4

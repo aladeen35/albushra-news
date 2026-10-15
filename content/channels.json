@@ -1,0 +1,62 @@
+{
+ "channels": [
+  {
+   "key": "main",
+   "name": "الشاملة",
+   "chat": "",
+   "filter": "top",
+   "limit": 5
+  },
+  {
+   "key": "sudan",
+   "name": "السودان",
+   "chat": "",
+   "filter": "sudan",
+   "limit": 15
+  },
+  {
+   "key": "palestine",
+   "name": "فلسطين",
+   "chat": "",
+   "filter": "palestine",
+   "limit": 15
+  },
+  {
+   "key": "saudi",
+   "name": "السعودية",
+   "chat": "",
+   "filter": "saudi",
+   "limit": 15
+  },
+  {
+   "key": "sports",
+   "name": "الرياضة",
+   "chat": "",
+   "filter": "sports",
+   "limit": 5
+  }
+ ],
+ "numbers": {
+  "chat": "",
+  "hour": 6,
+  "tz": "Asia/Riyadh",
+  "cities": [
+   [
+    "الخرطوم",
+    15.5007,
+    32.5599
+   ],
+   [
+    "مكة المكرمة",
+    21.3891,
+    39.8579
+   ],
+   [
+    "القدس",
+    31.7683,
+    35.2137
+   ]
+  ]
+ },
+ "language": "ar"
+}
