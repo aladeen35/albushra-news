@@ -31,6 +31,12 @@ export function safeUrl(u) {
   } catch { return null; }
 }
 
+// A static page served next to index.html (about.html, privacy.html), as an
+// absolute same-site URL so safeUrl accepts it; opens in the reader's language.
+export function sitePage(file) {
+  return new URL(`${file}?lang=${settings.lang}`, location.href.split("#")[0]).href;
+}
+
 export function externalLink(url, ...children) {
   return h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "ext" }, ...children,
     h("span", { class: "ext-mark", "aria-hidden": "true" }, " ↗"));

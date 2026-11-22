@@ -524,5 +524,9 @@
  "gh.tg.numbers": "World-in-numbers channel (daily post)",
  "gh.tg.hour": "Hour to send (Makkah time)",
  "gh.tg.test": "Test message",
- "gh.tg.test_started": "Update started with one test message per channel; it arrives within minutes."
+ "gh.tg.test_started": "Update started with one test message per channel; it arrives within minutes.",
+ "footer.legal": "About the site",
+ "footer.about_dev": "About the developer & ecosystem",
+ "footer.privacy": "Privacy policy",
+ "settings.about": "About the site"
 }
