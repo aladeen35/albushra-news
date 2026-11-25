@@ -3,7 +3,7 @@ import { icon } from "./icons.js";
 import { translateButton, translatedPageUrl, targetLanguage } from "./translate.js";
 import { shareCardButton, storyLink } from "./sharecard.js";
 import { weatherStrip, todayRow } from "./extras.js";
-import { h, t, every, L, settings, saveSettings, saved, prefs, api, qs, fmtDate, fmtDateTime, fmtNumber,
+import { h, t, every, L, settings, sitePage, saveSettings, saved, prefs, api, qs, fmtDate, fmtDateTime, fmtNumber,
   fmtPeriod, externalLink, langName } from "./core.js";
 import { META, metricCard, articleList, emptyState, errorState, loading, trendChart, typeBadge,
   countryName, observationFacts, valueBlock, bdi, demoBadge, flag, avatar, countryChip,
@@ -358,6 +358,10 @@ export function settingsView(rerender) {
       h("p", { class: "muted small" }, t("settings.app.note")),
       h("button", { class: "btn ghost", type: "button", onclick: () => window.AlBushraApp.openServerSettings() },
         t("settings.app.server"))) : null,
+    h("fieldset", {}, h("legend", {}, t("settings.about")),
+      h("div", { class: "settings-links" },
+        h("a", { class: "btn ghost", href: sitePage("about.html") }, t("footer.about_dev")),
+        h("a", { class: "btn ghost", href: sitePage("privacy.html") }, t("footer.privacy")))),
     h("p", { class: "muted small" }, t("settings.privacy")),
     h("p", { class: "muted small" }, t("settings.alerts_later")));
 }

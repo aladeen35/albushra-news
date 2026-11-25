@@ -1,5 +1,5 @@
 // Router and shell. Hash routes keep the app a static bundle any server can host.
-import { every, h, t, settings, applySettings, loadLanguage, api, saveSettings, fmtDateTime } from "./core.js";
+import { every, h, t, settings, sitePage, applySettings, loadLanguage, api, saveSettings, fmtDateTime } from "./core.js";
 import { setMeta, META, errorState, loading, flag } from "./components.js";
 import { homeView, sectionView, articleView, metricView, searchView, howView, settingsView,
   savedView, sourcesView, forYouView } from "./views.js";
@@ -112,6 +112,9 @@ function shell() {
           h("li", {}, h("a", { href: "#/saved" }, t("nav.saved"))),
           h("li", {}, h("a", { href: "#/settings" }, t("nav.settings"))),
           h("li", {}, h("a", { href: "#/admin" }, icon("admin", 14), " ", t("nav.admin")))))),
+    h("nav", { class: "footer-legal", "aria-label": t("footer.legal") },
+      h("a", { href: sitePage("about.html") }, t("footer.about_dev")),
+      h("a", { href: sitePage("privacy.html") }, t("footer.privacy"))),
     h("p", { class: "footer-rights" }, t("footer.rights", { y: new Date().getFullYear() }))));
   document.title = t("app.name");
 }
